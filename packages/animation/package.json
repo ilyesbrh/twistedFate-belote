@@ -1,0 +1,19 @@
+{
+  "name": "@belote/animation",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Isolated animation engine - testable, framework-independent",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "types": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --build"
+  }
+}

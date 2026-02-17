@@ -1,0 +1,22 @@
+{
+  "name": "@belote/app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Application layer - command/event orchestration",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "types": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --build"
+  },
+  "dependencies": {
+    "@belote/core": "workspace:*"
+  }
+}
