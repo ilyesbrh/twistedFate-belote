@@ -96,7 +96,7 @@ export function createBiddingRound(
   idGenerator: IdGenerator,
 ): BiddingRound {
   return Object.freeze({
-    id: idGenerator.generateId("round"),
+    id: idGenerator.generateId("bidding_round"),
     dealerPosition,
     bids: Object.freeze([]),
     currentPlayerPosition: getNextPlayerPosition(dealerPosition),

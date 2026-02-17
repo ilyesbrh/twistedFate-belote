@@ -61,3 +61,9 @@ export {
   calculateRoundScore,
 } from "./models/index.js";
 export type { TeamPoints, RoundScore } from "./models/index.js";
+
+export { createRound, placeBidInRound, playCardInRound } from "./models/index.js";
+export type { RoundPhase, Round } from "./models/index.js";
+
+export { DEFAULT_TARGET_SCORE, createGame, addCompletedRound } from "./models/index.js";
+export type { GameState, Game } from "./models/index.js";

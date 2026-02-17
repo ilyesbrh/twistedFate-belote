@@ -5,6 +5,7 @@ export type EntityType =
   | "deck"
   | "trick"
   | "round"
+  | "bidding_round"
   | "team"
   | "bid"
   | "contract"

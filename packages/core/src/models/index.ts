@@ -45,3 +45,9 @@ export {
   calculateRoundScore,
 } from "./scoring.js";
 export type { TeamPoints, RoundScore } from "./scoring.js";
+
+export { createRound, placeBidInRound, playCardInRound } from "./round.js";
+export type { RoundPhase, Round } from "./round.js";
+
+export { DEFAULT_TARGET_SCORE, createGame, addCompletedRound } from "./game.js";
+export type { GameState, Game } from "./game.js";

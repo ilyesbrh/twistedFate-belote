@@ -163,6 +163,7 @@ These items vary by region and **must be locked down** before implementation:
 | All-trumps / No-trumps         | Supported vs not                   | **Deferred**: Not in current scope         |
 | Capot / Generale               | Supported vs not                   | **Deferred**: Not in current scope         |
 | Coinche / Surcoinche           | Supported vs not                   | **Decided**: Supported, immediate-end flow |
-| Target score                   | 1000 vs configurable               | **TBD**                                    |
+| Target score                   | 1000 vs configurable               | **Decided**: Configurable (default 1000)   |
+| Both teams reach target        | Contracting priority vs higher     | **Decided**: Contracting team wins         |
 
 > **Note**: Tunisian Belote is not 100% standardized — rules shift by region. Each TBD must be resolved by the PO before the relevant iteration begins.

@@ -1,0 +1,8 @@
+# Custom Dictionary Words
+Belote
+Capot
+Carré
+Cinquante
+Coinche
+Rebelote
+Surcoinche
