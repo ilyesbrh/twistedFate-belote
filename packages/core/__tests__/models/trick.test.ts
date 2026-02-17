@@ -3,6 +3,7 @@ import {
   createTrick,
   playCard,
   isValidPlay,
+  getValidPlays,
   getTrickWinner,
   removeCardFromHand,
 } from "../../src/models/trick.js";
@@ -725,5 +726,123 @@ describe("Integration", () => {
 
     expect(t.winnerPosition).toBe(3); // ace highest non-trump
     expect(getTrickWinner(t)).toBe(3);
+  });
+});
+
+// ==============================================================
+// getValidPlays
+// ==============================================================
+
+describe("getValidPlays", () => {
+  it("should return all cards when player is leading (any card valid)", () => {
+    const trick = createTrick(0, "hearts", idGen);
+    const c1 = card("spades", "ace");
+    const c2 = card("hearts", "jack");
+    const c3 = card("diamonds", "7");
+    const hand = [c1, c2, c3];
+
+    const validPlays = getValidPlays(trick, 0, hand);
+    expect(validPlays).toHaveLength(3);
+    expect(validPlays).toContain(c1);
+    expect(validPlays).toContain(c2);
+    expect(validPlays).toContain(c3);
+  });
+
+  it("should return only led-suit cards when player has that suit", () => {
+    const trick = createTrick(0, "hearts", idGen);
+    const lead = card("spades", "ace");
+    const t1 = playCard(trick, lead, 0, [lead]);
+
+    const s1 = card("spades", "king");
+    const s2 = card("spades", "7");
+    const d1 = card("diamonds", "10");
+    const hand = [s1, s2, d1];
+
+    const validPlays = getValidPlays(t1, 1, hand);
+    expect(validPlays).toHaveLength(2);
+    expect(validPlays).toContain(s1);
+    expect(validPlays).toContain(s2);
+  });
+
+  it("should return only trump cards when player has no led suit but has trump", () => {
+    const trick = createTrick(0, "hearts", idGen);
+    const lead = card("spades", "ace");
+    const t1 = playCard(trick, lead, 0, [lead]);
+
+    const h1 = card("hearts", "7");
+    const h2 = card("hearts", "jack");
+    const d1 = card("diamonds", "10");
+    const hand = [h1, h2, d1];
+
+    const validPlays = getValidPlays(t1, 1, hand);
+    expect(validPlays).toHaveLength(2);
+    expect(validPlays).toContain(h1);
+    expect(validPlays).toContain(h2);
+  });
+
+  it("should return all cards when player has neither led suit nor trump", () => {
+    const trick = createTrick(0, "hearts", idGen);
+    const lead = card("spades", "ace");
+    const t1 = playCard(trick, lead, 0, [lead]);
+
+    const d1 = card("diamonds", "7");
+    const c1 = card("clubs", "king");
+    const hand = [d1, c1];
+
+    const validPlays = getValidPlays(t1, 1, hand);
+    expect(validPlays).toHaveLength(2);
+    expect(validPlays).toContain(d1);
+    expect(validPlays).toContain(c1);
+  });
+
+  it("should return only higher trumps when must overtrump and can", () => {
+    const trick = createTrick(0, "hearts", idGen);
+    const lead = card("clubs", "ace");
+    const t1 = playCard(trick, lead, 0, [lead]);
+    const trump10 = card("hearts", "10"); // rank 4
+    const t2 = playCard(t1, trump10, 1, [trump10]);
+
+    // Player 2: hearts 9 (rank 6, higher), hearts 8 (rank 1, lower)
+    const h9 = card("hearts", "9");
+    const h8 = card("hearts", "8");
+    const hand = [h9, h8];
+
+    const validPlays = getValidPlays(t2, 2, hand);
+    expect(validPlays).toHaveLength(1);
+    expect(validPlays).toContain(h9);
+  });
+
+  it("should return all trumps when must trump but cannot overtrump", () => {
+    const trick = createTrick(0, "hearts", idGen);
+    const lead = card("clubs", "ace");
+    const t1 = playCard(trick, lead, 0, [lead]);
+    const trumpJack = card("hearts", "jack"); // rank 7 (highest)
+    const t2 = playCard(t1, trumpJack, 1, [trumpJack]);
+
+    // Player 2: hearts 7 (rank 0) and hearts 8 (rank 1) — both lower than jack
+    const h7 = card("hearts", "7");
+    const h8 = card("hearts", "8");
+    const hand = [h7, h8];
+
+    const validPlays = getValidPlays(t2, 2, hand);
+    expect(validPlays).toHaveLength(2);
+    expect(validPlays).toContain(h7);
+    expect(validPlays).toContain(h8);
+  });
+
+  it("should return empty array for completed trick", () => {
+    const trick = createTrick(0, "hearts", idGen);
+    const c0 = card("clubs", "7");
+    const c1 = card("clubs", "8");
+    const c2 = card("clubs", "9");
+    const c3 = card("clubs", "10");
+    let t = playCard(trick, c0, 0, [c0]);
+    t = playCard(t, c1, 1, [c1]);
+    t = playCard(t, c2, 2, [c2]);
+    t = playCard(t, c3, 3, [c3]);
+
+    expect(t.state).toBe("completed");
+    const validPlays = getValidPlays(t, 0, [card("clubs", "ace")]);
+    expect(validPlays).toHaveLength(0);
   });
 });

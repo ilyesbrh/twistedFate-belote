@@ -30,6 +30,7 @@ export {
   createBiddingRound,
   placeBid,
   isValidBid,
+  getValidBids,
   getContract,
 } from "./models/index.js";
 export type {
@@ -45,6 +46,7 @@ export {
   createTrick,
   playCard,
   isValidPlay,
+  getValidPlays,
   getTrickWinner,
   removeCardFromHand,
 } from "./models/index.js";
@@ -67,3 +69,5 @@ export type { RoundPhase, Round } from "./models/index.js";
 
 export { DEFAULT_TARGET_SCORE, createGame, addCompletedRound } from "./models/index.js";
 export type { GameState, Game } from "./models/index.js";
+
+export { chooseCard, chooseCardForRound, chooseBid, evaluateHandForSuit } from "./ai/index.js";

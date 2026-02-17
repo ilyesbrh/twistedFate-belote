@@ -27,11 +27,19 @@ export {
   createBiddingRound,
   placeBid,
   isValidBid,
+  getValidBids,
   getContract,
 } from "./bid.js";
 export type { BidType, BidValue, Bid, BiddingState, BiddingRound, Contract } from "./bid.js";
 
-export { createTrick, playCard, isValidPlay, getTrickWinner, removeCardFromHand } from "./trick.js";
+export {
+  createTrick,
+  playCard,
+  isValidPlay,
+  getValidPlays,
+  getTrickWinner,
+  removeCardFromHand,
+} from "./trick.js";
 export type { TrickState, PlayedCard, Trick } from "./trick.js";
 
 export {

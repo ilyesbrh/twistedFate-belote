@@ -1,5 +1,6 @@
 import type { IdGenerator } from "../utils/id.js";
 import type { Suit } from "./card.js";
+import { ALL_SUITS } from "./card.js";
 import type { PlayerPosition } from "./player.js";
 import { getNextPlayerPosition, isOnSameTeam } from "./player-helpers.js";
 
@@ -171,6 +172,50 @@ export function isValidBid(round: BiddingRound, bid: Bid): boolean {
     case "surcoinche":
       return false;
   }
+}
+
+// ── Valid Bids Query ──
+
+export function getValidBids(
+  biddingRound: BiddingRound,
+  playerPosition: PlayerPosition,
+  idGenerator: IdGenerator,
+): Bid[] {
+  if (biddingRound.state !== "in_progress") {
+    return [];
+  }
+
+  const validBids: Bid[] = [];
+
+  // Try pass
+  const passBid = createPassBid(playerPosition, idGenerator);
+  if (isValidBid(biddingRound, passBid)) {
+    validBids.push(passBid);
+  }
+
+  // Try all suit bids (4 suits × 9 values)
+  for (const suit of ALL_SUITS) {
+    for (const value of BID_VALUES) {
+      const suitBid = createSuitBid(playerPosition, value, suit, idGenerator);
+      if (isValidBid(biddingRound, suitBid)) {
+        validBids.push(suitBid);
+      }
+    }
+  }
+
+  // Try coinche
+  const coincheBid = createCoincheBid(playerPosition, idGenerator);
+  if (isValidBid(biddingRound, coincheBid)) {
+    validBids.push(coincheBid);
+  }
+
+  // Try surcoinche
+  const surCoincheBid = createSurcoincheBid(playerPosition, idGenerator);
+  if (isValidBid(biddingRound, surCoincheBid)) {
+    validBids.push(surCoincheBid);
+  }
+
+  return validBids;
 }
 
 // ── State Transitions ──

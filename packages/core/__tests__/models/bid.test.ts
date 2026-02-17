@@ -8,6 +8,7 @@ import {
   createBiddingRound,
   placeBid,
   isValidBid,
+  getValidBids,
   getContract,
   getNextPlayerPosition,
   isOnSameTeam,
@@ -617,5 +618,120 @@ describe("Bidding System", () => {
       expect(contract.suit).toBe("clubs");
       expect(contract.value).toBe(120);
     });
+  });
+});
+
+// ==============================================================
+// getValidBids
+// ==============================================================
+
+describe("getValidBids", () => {
+  it("should always include pass when bidding is in progress", () => {
+    const gen = createIdGenerator({ seed: 100 });
+    const round = createBiddingRound(0, gen);
+    // Current player is position 1 (dealer+1)
+    const validBids = getValidBids(round, 1, gen);
+    const passBids = validBids.filter((b) => b.type === "pass");
+    expect(passBids).toHaveLength(1);
+  });
+
+  it("should include all suit×value combos when no bid placed (36 suit bids + 1 pass = 37)", () => {
+    const gen = createIdGenerator({ seed: 101 });
+    const round = createBiddingRound(0, gen);
+    // Current player is position 1, no bids yet → all 9 values × 4 suits + 1 pass
+    const validBids = getValidBids(round, 1, gen);
+    const suitBids = validBids.filter((b) => b.type === "suit");
+    expect(suitBids).toHaveLength(36);
+    expect(validBids).toHaveLength(37); // 36 suit + 1 pass
+  });
+
+  it("should only include suit bids strictly above current highest value", () => {
+    const gen = createIdGenerator({ seed: 102 });
+    let round = createBiddingRound(0, gen);
+    // Position 1 bids 100 hearts
+    round = placeBid(round, createSuitBid(1, 100, "hearts", gen));
+
+    // Position 2 should only see suit bids > 100 (110-160) = 6 values × 4 suits = 24
+    const validBids = getValidBids(round, 2, gen);
+    const suitBids = validBids.filter((b) => b.type === "suit");
+    expect(suitBids).toHaveLength(24); // 6 values × 4 suits
+    suitBids.forEach((b) => {
+      expect(b.value).toBeGreaterThan(100);
+    });
+  });
+
+  it("should include coinche for opponent of highest bidder", () => {
+    const gen = createIdGenerator({ seed: 103 });
+    let round = createBiddingRound(0, gen);
+    // Position 1 bids 80 hearts (team 1,3)
+    round = placeBid(round, createSuitBid(1, 80, "hearts", gen));
+
+    // Position 2 (team 0,2 — opponent) should have coinche available
+    const validBids = getValidBids(round, 2, gen);
+    const coincheBids = validBids.filter((b) => b.type === "coinche");
+    expect(coincheBids).toHaveLength(1);
+  });
+
+  it("should not include coinche for teammate of highest bidder", () => {
+    const gen = createIdGenerator({ seed: 104 });
+    let round = createBiddingRound(0, gen);
+    // Position 1 bids 80 hearts (team 1,3)
+    round = placeBid(round, createSuitBid(1, 80, "hearts", gen));
+    // Position 2 passes
+    round = placeBid(round, createPassBid(2, gen));
+
+    // Position 3 (team 1,3 — same team as bidder) should NOT have coinche
+    const validBids = getValidBids(round, 3, gen);
+    const coincheBids = validBids.filter((b) => b.type === "coinche");
+    expect(coincheBids).toHaveLength(0);
+  });
+
+  it("should include surcoinche for teammate of highest bidder after coinche", () => {
+    const gen = createIdGenerator({ seed: 105 });
+    let round = createBiddingRound(0, gen);
+    // Position 1 bids 80 hearts (team 1,3)
+    round = placeBid(round, createSuitBid(1, 80, "hearts", gen));
+    // Position 2 coinches (team 0,2)
+    round = placeBid(round, createCoincheBid(2, gen));
+
+    // Position 3 (team 1,3 — bidding team) should have surcoinche
+    const validBids = getValidBids(round, 3, gen);
+    const surCoincheBids = validBids.filter((b) => b.type === "surcoinche");
+    expect(surCoincheBids).toHaveLength(1);
+  });
+
+  it("should not include surcoinche for opponent team after coinche", () => {
+    const gen = createIdGenerator({ seed: 106 });
+    let round = createBiddingRound(0, gen);
+    // Position 1 bids 80 hearts (team 1,3)
+    round = placeBid(round, createSuitBid(1, 80, "hearts", gen));
+    // Position 2 coinches (team 0,2)
+    round = placeBid(round, createCoincheBid(2, gen));
+
+    // Position 3 should have surcoinche (teammate)
+    // But position 0 (team 0,2 — opponent team of bidder) should NOT have surcoinche
+    // However, after coinche, position 3 is current. Let's test this differently:
+    // Skip to position 0 by having position 3 pass
+    round = placeBid(round, createPassBid(3, gen));
+    // Now state should be completed (bidding team member passed after coinche)
+    expect(round.state).toBe("completed");
+
+    // Completed round → no valid bids
+    const validBids = getValidBids(round, 0, gen);
+    expect(validBids).toHaveLength(0);
+  });
+
+  it("should return empty array when bidding round is completed or all_passed", () => {
+    const gen = createIdGenerator({ seed: 107 });
+    let round = createBiddingRound(0, gen);
+    // All 4 players pass
+    round = placeBid(round, createPassBid(1, gen));
+    round = placeBid(round, createPassBid(2, gen));
+    round = placeBid(round, createPassBid(3, gen));
+    round = placeBid(round, createPassBid(0, gen));
+    expect(round.state).toBe("all_passed");
+
+    const validBids = getValidBids(round, 0, gen);
+    expect(validBids).toHaveLength(0);
   });
 });

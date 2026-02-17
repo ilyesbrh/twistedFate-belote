@@ -128,6 +128,16 @@ export function isValidPlay(
   return true;
 }
 
+// ── Valid Plays Query ──
+
+export function getValidPlays(
+  trick: Trick,
+  playerPosition: PlayerPosition,
+  playerHand: readonly Card[],
+): Card[] {
+  return playerHand.filter((card) => isValidPlay(trick, card, playerPosition, playerHand));
+}
+
 // ── Winner Determination (private) ──
 
 function determineTrickWinner(cards: readonly PlayedCard[], trumpSuit: Suit): PlayerPosition {
