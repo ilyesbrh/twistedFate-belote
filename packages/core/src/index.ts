@@ -49,3 +49,15 @@ export {
   removeCardFromHand,
 } from "./models/index.js";
 export type { TrickState, PlayedCard, Trick } from "./models/index.js";
+
+export {
+  LAST_TRICK_BONUS,
+  BELOTE_BONUS,
+  TOTAL_CARD_POINTS,
+  TOTAL_ROUND_POINTS,
+  calculateTrickPoints,
+  calculateTeamPoints,
+  detectBeloteRebelote,
+  calculateRoundScore,
+} from "./models/index.js";
+export type { TeamPoints, RoundScore } from "./models/index.js";

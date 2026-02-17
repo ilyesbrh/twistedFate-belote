@@ -33,3 +33,15 @@ export type { BidType, BidValue, Bid, BiddingState, BiddingRound, Contract } fro
 
 export { createTrick, playCard, isValidPlay, getTrickWinner, removeCardFromHand } from "./trick.js";
 export type { TrickState, PlayedCard, Trick } from "./trick.js";
+
+export {
+  LAST_TRICK_BONUS,
+  BELOTE_BONUS,
+  TOTAL_CARD_POINTS,
+  TOTAL_ROUND_POINTS,
+  calculateTrickPoints,
+  calculateTeamPoints,
+  detectBeloteRebelote,
+  calculateRoundScore,
+} from "./scoring.js";
+export type { TeamPoints, RoundScore } from "./scoring.js";

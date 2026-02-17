@@ -155,6 +155,9 @@ These items vary by region and **must be locked down** before implementation:
 | ------------------------------ | ---------------------------------- | ------------------------------------------ |
 | Exact bidding system           | Value-based (80-160) vs simplified | **Decided**: Value-based, 80-160 step 10   |
 | Overtrump when partner winning | Required vs optional               | **Decided**: Always required (strict rule) |
+| Belote/Rebelote detection      | Auto-detect vs manual announce     | **Decided**: Auto-detect from tricks       |
+| Coinche scoring on failure     | Opponent gets 162×N vs fixed       | **Decided**: Opponent gets 162×multiplier  |
+| Belote bonus timing            | Before vs after multiplier         | **Decided**: After multiplier (+20 flat)   |
 | Announcement support           | None / Belote only / Full set      | **TBD**                                    |
 | Deal pattern                   | 3-2-3 vs 2-3-3 vs 8-at-once        | **Decided**: 8-at-once (round-robin)       |
 | All-trumps / No-trumps         | Supported vs not                   | **Deferred**: Not in current scope         |
