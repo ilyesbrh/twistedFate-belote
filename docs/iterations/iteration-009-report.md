@@ -87,9 +87,15 @@ type GameCommand = StartGameCommand | StartRoundCommand | PlaceBidCommand | Play
 
 // Events
 type GameEvent =
-  | GameStartedEvent | RoundStartedEvent | BidPlacedEvent
-  | BiddingCompletedEvent | CardPlayedEvent | TrickCompletedEvent
-  | RoundCompletedEvent | RoundCancelledEvent | GameCompletedEvent;
+  | GameStartedEvent
+  | RoundStartedEvent
+  | BidPlacedEvent
+  | BiddingCompletedEvent
+  | CardPlayedEvent
+  | TrickCompletedEvent
+  | RoundCompletedEvent
+  | RoundCancelledEvent
+  | GameCompletedEvent;
 
 // Session
 class GameSession {
@@ -97,7 +103,7 @@ class GameSession {
   readonly game: Game | null;
   readonly currentRound: Round | null;
   readonly roundNumber: number;
-  on(listener: GameEventListener): () => void;  // Returns unsubscribe fn
+  on(listener: GameEventListener): () => void; // Returns unsubscribe fn
   dispatch(command: GameCommand): void;
 }
 
@@ -112,12 +118,12 @@ interface SessionConfig {
 
 ### Command Flow
 
-| Command | Valid States | Side Effects |
-|---------|-------------|--------------|
-| `start_game` | `idle` | Creates game, emits `game_started` |
-| `start_round` | `game_started`, `round_completed` | Creates round, deals cards, emits `round_started`, triggers AI bidding |
-| `place_bid` | `round_bidding` | Forwards bid, emits `bid_placed`, may trigger `bidding_completed`/`round_cancelled`, triggers AI |
-| `play_card` | `round_playing` | Plays card, emits `card_played`, may trigger `trick_completed`/`round_completed`/`game_completed`, triggers AI |
+| Command       | Valid States                      | Side Effects                                                                                                   |
+| ------------- | --------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `start_game`  | `idle`                            | Creates game, emits `game_started`                                                                             |
+| `start_round` | `game_started`, `round_completed` | Creates round, deals cards, emits `round_started`, triggers AI bidding                                         |
+| `place_bid`   | `round_bidding`                   | Forwards bid, emits `bid_placed`, may trigger `bidding_completed`/`round_cancelled`, triggers AI               |
+| `play_card`   | `round_playing`                   | Plays card, emits `card_played`, may trigger `trick_completed`/`round_completed`/`game_completed`, triggers AI |
 
 ### AI Auto-Play Behavior
 
@@ -128,15 +134,15 @@ interface SessionConfig {
 
 ## Technical Decisions
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Class-based GameSession | Mutable internal state | Session is inherently stateful; class encapsulates mutation cleanly while exposing immutable snapshots via getters |
-| Synchronous event emission | No async/queue | Game logic is purely computational; async adds complexity without benefit at this stage |
-| Command pattern (not direct methods) | Typed discriminated union | Serializable, loggable, replay-friendly; enables undo/redo in future |
-| Events as typed union | Discriminated union on `type` | Type-safe listeners can narrow events; extensible without breaking changes |
-| AI auto-play in session | Not in separate layer | Session is the natural orchestrator; keeps AI integration simple and testable |
-| Unsubscribe via returned function | Not `.off(listener)` | Simpler API, no reference equality concerns |
-| `_playSingleCard` extraction | Shared by human + AI paths | Prevents trick_completed double-emission bug; single source of truth for card play + event logic |
+| Decision                             | Choice                        | Rationale                                                                                                          |
+| ------------------------------------ | ----------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Class-based GameSession              | Mutable internal state        | Session is inherently stateful; class encapsulates mutation cleanly while exposing immutable snapshots via getters |
+| Synchronous event emission           | No async/queue                | Game logic is purely computational; async adds complexity without benefit at this stage                            |
+| Command pattern (not direct methods) | Typed discriminated union     | Serializable, loggable, replay-friendly; enables undo/redo in future                                               |
+| Events as typed union                | Discriminated union on `type` | Type-safe listeners can narrow events; extensible without breaking changes                                         |
+| AI auto-play in session              | Not in separate layer         | Session is the natural orchestrator; keeps AI integration simple and testable                                      |
+| Unsubscribe via returned function    | Not `.off(listener)`          | Simpler API, no reference equality concerns                                                                        |
+| `_playSingleCard` extraction         | Shared by human + AI paths    | Prevents trick_completed double-emission bug; single source of truth for card play + event logic                   |
 
 ## Risks Identified
 
