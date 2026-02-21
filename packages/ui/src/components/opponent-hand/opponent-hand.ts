@@ -28,8 +28,9 @@ export class OpponentHand extends Container {
   /**
    * Update the opponent hand with a card count and zone dimensions.
    * Cards are always face-down. Uses a dummy suit/rank since back is shown.
+   * @param targetCardHeight Optional visual card height for cross-orientation consistency.
    */
-  update(zone: Rect, cardCount: number): void {
+  update(zone: Rect, cardCount: number, targetCardHeight?: number): void {
     // Remove existing card sprites
     for (const sprite of this.cardSprites) {
       this.removeChild(sprite);
@@ -38,7 +39,7 @@ export class OpponentHand extends Container {
     this.cardSprites = [];
 
     // Compute layout
-    const layout = computeOpponentLayout(zone, cardCount, this.orientation);
+    const layout = computeOpponentLayout(zone, cardCount, this.orientation, targetCardHeight);
 
     // Create and position face-down card sprites
     for (const pos of layout.cards) {

@@ -219,6 +219,71 @@ describe("computeOpponentLayout single card", () => {
 });
 
 // ====================================================================
+// Card size normalization — targetCardHeight
+// ====================================================================
+
+describe("computeOpponentLayout card size normalization", () => {
+  it("horizontal and vertical produce same visual card height with targetCardHeight", () => {
+    const target = 56;
+    const h = computeOpponentLayout(TOP_ZONE, 8, "horizontal", target);
+    const v = computeOpponentLayout(LEFT_ZONE, 8, "vertical", target);
+
+    // Horizontal visual height = cardHeight
+    expect(h.cardHeight).toBe(target);
+    // Vertical visual height = cardWidth (rotated 90°)
+    expect(v.cardWidth).toBe(target);
+  });
+
+  it("targetCardHeight sets horizontal cardHeight directly", () => {
+    const result = computeOpponentLayout(TOP_ZONE, 8, "horizontal", 50);
+    expect(result.cardHeight).toBe(50);
+    // cardWidth derived via aspect ratio
+    expect(result.cardWidth).toBeGreaterThan(0);
+    expect(result.cardWidth).toBeLessThan(50);
+  });
+
+  it("targetCardHeight sets vertical visual height (cardWidth after rotation)", () => {
+    const result = computeOpponentLayout(LEFT_ZONE, 8, "vertical", 50);
+    // After 90° rotation, cardWidth becomes the displayed height
+    expect(result.cardWidth).toBe(50);
+    // cardHeight = physical long dimension (displayed width after rotation)
+    expect(result.cardHeight).toBeGreaterThan(50);
+  });
+
+  it("clamps horizontal targetCardHeight to zone height limit", () => {
+    // Target 100 exceeds what fits in zone height 70
+    const result = computeOpponentLayout(TOP_ZONE, 8, "horizontal", 100);
+    expect(result.cardHeight).toBeLessThanOrEqual(TOP_ZONE.height);
+  });
+
+  it("clamps vertical targetCardHeight to zone width limit", () => {
+    // Target 200 would require cardHeight = 200/ratio ≈ 280, exceeding zone width 127
+    const result = computeOpponentLayout(LEFT_ZONE, 8, "vertical", 200);
+    expect(result.cardHeight).toBeLessThanOrEqual(LEFT_ZONE.width);
+  });
+
+  it("without targetCardHeight, uses zone-based sizing (backward compat)", () => {
+    const without = computeOpponentLayout(TOP_ZONE, 8, "horizontal");
+    const withUndef = computeOpponentLayout(TOP_ZONE, 8, "horizontal", undefined);
+    expect(without.cardHeight).toBe(withUndef.cardHeight);
+    expect(without.cardWidth).toBe(withUndef.cardWidth);
+  });
+
+  it("vertical cards still fit within zone bounds with targetCardHeight", () => {
+    const target = 60;
+    const result = computeOpponentLayout(LEFT_ZONE, 8, "vertical", target);
+    // After rotation: displayed width = cardHeight, must fit in zone.width
+    expect(result.cardHeight).toBeLessThanOrEqual(LEFT_ZONE.width);
+    // Stack stays within zone vertical bounds
+    const halfDisplayHeight = result.cardWidth / 2;
+    const topEdge = result.cards[0]!.y - halfDisplayHeight;
+    const bottomEdge = result.cards[result.cards.length - 1]!.y + halfDisplayHeight;
+    expect(topEdge).toBeGreaterThanOrEqual(LEFT_ZONE.y - 1);
+    expect(bottomEdge).toBeLessThanOrEqual(LEFT_ZONE.y + LEFT_ZONE.height + 1);
+  });
+});
+
+// ====================================================================
 // Immutability
 // ====================================================================
 

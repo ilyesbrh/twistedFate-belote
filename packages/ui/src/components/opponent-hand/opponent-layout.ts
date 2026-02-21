@@ -35,27 +35,45 @@ const STACK_OVERLAP = 0.85;
 
 // ---- Public function ------------------------------------------------
 
+/**
+ * Compute opponent card positions.
+ * @param targetCardHeight Optional visual card height (as seen on screen).
+ *   When provided, both horizontal and vertical orientations produce cards
+ *   with the same displayed height, ensuring visual consistency across all
+ *   opponents. Clamped to fit within the zone.
+ */
 export function computeOpponentLayout(
   zone: Rect,
   cardCount: number,
   orientation: OpponentOrientation,
+  targetCardHeight?: number,
 ): OpponentLayoutResult {
   if (cardCount === 0) {
     return deepFreeze({ cards: [], cardWidth: 0, cardHeight: 0 });
   }
 
   if (orientation === "horizontal") {
-    return computeHorizontal(zone, cardCount);
+    return computeHorizontal(zone, cardCount, targetCardHeight);
   }
-  return computeVertical(zone, cardCount);
+  return computeVertical(zone, cardCount, targetCardHeight);
 }
 
 // ---- Horizontal (top opponent) --------------------------------------
 
-function computeHorizontal(zone: Rect, cardCount: number): OpponentLayoutResult {
-  // Card height fits within zone height
-  const cardHeight = Math.round(zone.height * CARD_SIZE_RATIO);
-  const cardWidth = Math.round(cardHeight * THEME.cardDimensions.aspectRatio);
+function computeHorizontal(
+  zone: Rect,
+  cardCount: number,
+  targetCardHeight?: number,
+): OpponentLayoutResult {
+  const aspectRatio = THEME.cardDimensions.aspectRatio;
+  const maxCardHeight = Math.round(zone.height * CARD_SIZE_RATIO);
+
+  // Visual height = cardHeight (no rotation)
+  const cardHeight =
+    targetCardHeight !== undefined
+      ? Math.min(Math.round(targetCardHeight), maxCardHeight)
+      : maxCardHeight;
+  const cardWidth = Math.round(cardHeight * aspectRatio);
 
   // Step between card centers (high overlap for compact stack)
   const desiredStep = cardWidth * (1 - STACK_OVERLAP);
@@ -83,11 +101,33 @@ function computeHorizontal(zone: Rect, cardCount: number): OpponentLayoutResult 
 
 // ---- Vertical (side opponents) --------------------------------------
 
-function computeVertical(zone: Rect, cardCount: number): OpponentLayoutResult {
-  // For vertical cards, card height becomes displayed width after 90° rotation.
-  // Size the card so the rotated height fits within zone width.
-  const cardHeight = Math.round(zone.width * CARD_SIZE_RATIO);
-  const cardWidth = Math.round(cardHeight * THEME.cardDimensions.aspectRatio);
+function computeVertical(
+  zone: Rect,
+  cardCount: number,
+  targetCardHeight?: number,
+): OpponentLayoutResult {
+  const aspectRatio = THEME.cardDimensions.aspectRatio;
+
+  // For vertical cards rotated 90°:
+  //   displayed width  = cardHeight (the physical long dimension)
+  //   displayed height = cardWidth  (the physical short dimension)
+  //
+  // Constraint: cardHeight must fit in zone.width.
+  const maxCardHeight = Math.round(zone.width * CARD_SIZE_RATIO);
+
+  let cardHeight: number;
+  let cardWidth: number;
+
+  if (targetCardHeight !== undefined) {
+    // targetCardHeight = desired visual height = cardWidth (after rotation)
+    // cardHeight = targetCardHeight / aspectRatio (physical long dimension)
+    const desiredCardHeight = Math.round(targetCardHeight / aspectRatio);
+    cardHeight = Math.min(desiredCardHeight, maxCardHeight);
+    cardWidth = Math.round(cardHeight * aspectRatio);
+  } else {
+    cardHeight = maxCardHeight;
+    cardWidth = Math.round(cardHeight * aspectRatio);
+  }
 
   // Step between card centers along the vertical axis
   // After rotation, displayed height = cardWidth

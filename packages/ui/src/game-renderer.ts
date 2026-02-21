@@ -128,13 +128,15 @@ export class GameRenderer implements InputSource {
     const localBottom: Rect = { x: 0, y: 0, width: bottomZone.width, height: bottomZone.height };
     this.handDisplay.update(localBottom, view.hand);
 
-    // Opponents
+    // Opponents — unified card size across all orientations
+    // Use top zone height as the basis (most constrained zone)
+    const opponentCardHeight = Math.round(layout.zones.top.height * 0.85);
     for (const opp of view.opponents) {
       const oppHand = this.opponents.get(opp.seat);
       if (!oppHand) continue;
       const zone = this.getZoneRectForSeat(opp.seat, layout.zones);
       const localZone: Rect = { x: 0, y: 0, width: zone.width, height: zone.height };
-      oppHand.update(localZone, opp.cardCount);
+      oppHand.update(localZone, opp.cardCount, opponentCardHeight);
     }
 
     // Trick display
