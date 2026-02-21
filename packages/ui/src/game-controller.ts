@@ -62,10 +62,12 @@ export class GameController {
   /** Wire UI input callbacks to session command dispatch. */
   wireInput(input: InputSource): void {
     input.onCardTap((_index, card) => {
+      const fullCard = this.findCardInHand(card.suit, card.rank);
+      if (!fullCard) return;
       this.session.dispatch({
         type: "play_card",
         playerPosition: 0 as PlayerPosition,
-        card: card as Card,
+        card: fullCard,
       });
     });
 
@@ -127,6 +129,14 @@ export class GameController {
         this.activeTurn = null;
         break;
     }
+  }
+
+  private findCardInHand(suit: Suit, rank: string): Card | undefined {
+    const round = this.session.currentRound;
+    if (!round) return undefined;
+    const humanPlayer = round.players.find((p) => p.position === 0);
+    if (!humanPlayer) return undefined;
+    return humanPlayer.hand.find((c) => c.suit === suit && c.rank === rank);
   }
 
   private refresh(): void {

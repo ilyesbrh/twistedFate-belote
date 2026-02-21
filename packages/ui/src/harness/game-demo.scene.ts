@@ -40,11 +40,7 @@ function createGameDemo(app: Application): void {
   controller.wireInput(renderer);
   controller.start();
 
-  // 5. Start the game and first round
-  session.dispatch(createStartGameCommand(PLAYER_NAMES, 1000));
-  session.dispatch(createStartRoundCommand());
-
-  // 6. Auto-start next round on round completion
+  // 5. Auto-start next round on round completion (register before dispatching)
   session.on((event) => {
     if (event.type === "round_completed" || event.type === "round_cancelled") {
       // Small delay so user can see the result before next round
@@ -55,6 +51,10 @@ function createGameDemo(app: Application): void {
       }, 1500);
     }
   });
+
+  // 6. Start the game and first round
+  session.dispatch(createStartGameCommand(PLAYER_NAMES, 1000));
+  session.dispatch(createStartRoundCommand());
 
   // 7. Handle resize
   app.renderer.on("resize", () => {

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import type { PlayerPosition, Suit, Card, Contract } from "@belote/core";
 import type { GameEventListener, GameEvent, GameCommand } from "@belote/app";
 import type { GameView, RoundSnapshot } from "../src/game-view.js";
@@ -577,6 +577,8 @@ describe("GameController input dispatch", () => {
     const input = createMockInput();
     const controller = new GameController(session, renderer, PLAYER_NAMES);
 
+    // Round must have matching card in human hand (position 0)
+    session.setRound(makeRoundWithCards("playing"));
     controller.wireInput(input);
     controller.start();
 
@@ -591,24 +593,44 @@ describe("GameController input dispatch", () => {
     });
   });
 
-  it("dispatches play_card with correct card data", () => {
+  it("dispatches play_card with full card (including id) from hand", () => {
     const session = createMockSession();
     const renderer = createMockRenderer();
     const input = createMockInput();
     const controller = new GameController(session, renderer, PLAYER_NAMES);
 
+    // Set up round with known card in hand
+    session.setRound(makeRoundWithCards("playing"));
     controller.wireInput(input);
     controller.start();
 
-    const card = { suit: "hearts" as Suit, rank: "jack" };
-    input.fireCardTap(2, card);
+    const card = { suit: "spades" as Suit, rank: "ace" };
+    input.fireCardTap(0, card);
 
     const cmd = session.dispatched[0];
     expect(cmd?.type).toBe("play_card");
     if (cmd?.type === "play_card") {
-      expect(cmd.card.suit).toBe("hearts");
-      expect(cmd.card.rank).toBe("jack");
+      expect(cmd.card.suit).toBe("spades");
+      expect(cmd.card.rank).toBe("ace");
+      expect(cmd.card.id).toBe("card-spades-ace");
     }
+  });
+
+  it("does not dispatch play_card when card not found in hand", () => {
+    const session = createMockSession();
+    const renderer = createMockRenderer();
+    const input = createMockInput();
+    const controller = new GameController(session, renderer, PLAYER_NAMES);
+
+    // Round has spades-ace in hand but we tap hearts-jack
+    session.setRound(makeRoundWithCards("playing"));
+    controller.wireInput(input);
+    controller.start();
+
+    const card = { suit: "hearts" as Suit, rank: "jack" };
+    input.fireCardTap(0, card);
+
+    expect(session.dispatched).toHaveLength(0);
   });
 
   it("dispatches place_bid with suit on suit bid tap", () => {
