@@ -1,9 +1,9 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import type { PlayerPosition, Suit, Card, Contract } from "@belote/core";
-import type { GameEventListener, GameEvent } from "@belote/app";
+import type { GameEventListener, GameEvent, GameCommand } from "@belote/app";
 import type { GameView, RoundSnapshot } from "../src/game-view.js";
 import { GameController } from "../src/game-controller.js";
-import type { GameSessionAccess, RenderTarget } from "../src/game-controller.js";
+import type { GameSessionAccess, RenderTarget, InputSource } from "../src/game-controller.js";
 
 // ====================================================================
 // game-controller — event-driven bridge between GameSession and renderer.
@@ -25,10 +25,12 @@ function createMockSession(): GameSessionAccess & {
   setScores: (scores: readonly [number, number]) => void;
   setGame: (game: { readonly teamScores: readonly [number, number] } | null) => void;
   listenerCount: () => number;
+  dispatched: GameCommand[];
 } {
   const listeners: GameEventListener[] = [];
   let currentRound: RoundSnapshot | null = null;
   let gameValue: { readonly teamScores: readonly [number, number] } | null = { teamScores: [0, 0] };
+  const dispatched: GameCommand[] = [];
 
   return {
     on(listener: GameEventListener): () => void {
@@ -37,6 +39,9 @@ function createMockSession(): GameSessionAccess & {
         const idx = listeners.indexOf(listener);
         if (idx !== -1) listeners.splice(idx, 1);
       };
+    },
+    dispatch(command: GameCommand): void {
+      dispatched.push(command);
     },
     get currentRound(): RoundSnapshot | null {
       return currentRound;
@@ -59,6 +64,7 @@ function createMockSession(): GameSessionAccess & {
     listenerCount(): number {
       return listeners.length;
     },
+    dispatched,
   };
 }
 
@@ -526,5 +532,151 @@ describe("GameController view immutability", () => {
     controller.start();
     const view = renderer.lastView()!;
     expect(Object.isFrozen(view)).toBe(true);
+  });
+});
+
+// ====================================================================
+// Input dispatch — UI actions → session commands
+// ====================================================================
+
+function createMockInput(): InputSource & {
+  fireCardTap: (index: number, card: { suit: Suit; rank: string }) => void;
+  fireSuitBid: (suit: Suit) => void;
+  firePass: () => void;
+} {
+  let cardTapCb: ((index: number, card: { suit: Suit; rank: string }) => void) | null = null;
+  let suitBidCb: ((suit: Suit) => void) | null = null;
+  let passCb: (() => void) | null = null;
+
+  return {
+    onCardTap(callback: (index: number, card: { suit: Suit; rank: string }) => void): void {
+      cardTapCb = callback;
+    },
+    onSuitBid(callback: (suit: Suit) => void): void {
+      suitBidCb = callback;
+    },
+    onPass(callback: () => void): void {
+      passCb = callback;
+    },
+    fireCardTap(index: number, card: { suit: Suit; rank: string }): void {
+      cardTapCb?.(index, card);
+    },
+    fireSuitBid(suit: Suit): void {
+      suitBidCb?.(suit);
+    },
+    firePass(): void {
+      passCb?.();
+    },
+  };
+}
+
+describe("GameController input dispatch", () => {
+  it("dispatches play_card command on card tap", () => {
+    const session = createMockSession();
+    const renderer = createMockRenderer();
+    const input = createMockInput();
+    const controller = new GameController(session, renderer, PLAYER_NAMES);
+
+    controller.wireInput(input);
+    controller.start();
+
+    const card = { suit: "spades" as Suit, rank: "ace" };
+    input.fireCardTap(0, card);
+
+    expect(session.dispatched).toHaveLength(1);
+    expect(session.dispatched[0]?.type).toBe("play_card");
+    expect(session.dispatched[0]).toMatchObject({
+      type: "play_card",
+      playerPosition: 0,
+    });
+  });
+
+  it("dispatches play_card with correct card data", () => {
+    const session = createMockSession();
+    const renderer = createMockRenderer();
+    const input = createMockInput();
+    const controller = new GameController(session, renderer, PLAYER_NAMES);
+
+    controller.wireInput(input);
+    controller.start();
+
+    const card = { suit: "hearts" as Suit, rank: "jack" };
+    input.fireCardTap(2, card);
+
+    const cmd = session.dispatched[0];
+    expect(cmd?.type).toBe("play_card");
+    if (cmd?.type === "play_card") {
+      expect(cmd.card.suit).toBe("hearts");
+      expect(cmd.card.rank).toBe("jack");
+    }
+  });
+
+  it("dispatches place_bid with suit on suit bid tap", () => {
+    const session = createMockSession();
+    const renderer = createMockRenderer();
+    const input = createMockInput();
+    const controller = new GameController(session, renderer, PLAYER_NAMES);
+
+    controller.wireInput(input);
+    controller.start();
+
+    input.fireSuitBid("hearts");
+
+    expect(session.dispatched).toHaveLength(1);
+    expect(session.dispatched[0]).toMatchObject({
+      type: "place_bid",
+      playerPosition: 0,
+      bidType: "suit",
+      suit: "hearts",
+    });
+  });
+
+  it("dispatches place_bid with pass on pass tap", () => {
+    const session = createMockSession();
+    const renderer = createMockRenderer();
+    const input = createMockInput();
+    const controller = new GameController(session, renderer, PLAYER_NAMES);
+
+    controller.wireInput(input);
+    controller.start();
+
+    input.firePass();
+
+    expect(session.dispatched).toHaveLength(1);
+    expect(session.dispatched[0]).toMatchObject({
+      type: "place_bid",
+      playerPosition: 0,
+      bidType: "pass",
+    });
+  });
+
+  it("dispatches suit bid with value 80", () => {
+    const session = createMockSession();
+    const renderer = createMockRenderer();
+    const input = createMockInput();
+    const controller = new GameController(session, renderer, PLAYER_NAMES);
+
+    controller.wireInput(input);
+    controller.start();
+
+    input.fireSuitBid("diamonds");
+
+    const cmd = session.dispatched[0];
+    expect(cmd?.type).toBe("place_bid");
+    if (cmd?.type === "place_bid") {
+      expect(cmd.value).toBe(80);
+    }
+  });
+
+  it("can wire input before start", () => {
+    const session = createMockSession();
+    const renderer = createMockRenderer();
+    const input = createMockInput();
+    const controller = new GameController(session, renderer, PLAYER_NAMES);
+
+    controller.wireInput(input);
+    input.firePass();
+
+    expect(session.dispatched).toHaveLength(1);
   });
 });

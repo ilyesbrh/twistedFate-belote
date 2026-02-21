@@ -131,7 +131,7 @@ export type { GameRendererConfig } from "./game-renderer.js";
 
 // Game Controller (event-driven bridge)
 export { GameController } from "./game-controller.js";
-export type { GameSessionAccess, RenderTarget } from "./game-controller.js";
+export type { GameSessionAccess, RenderTarget, InputSource } from "./game-controller.js";
 
 // Bootstrap
 export { createApp } from "./bootstrap.js";

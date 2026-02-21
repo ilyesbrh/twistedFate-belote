@@ -2,10 +2,11 @@
 // GameController — event-driven bridge between GameSession and renderer.
 // Subscribes to session events, tracks active turn, rebuilds GameView,
 // and pushes updates to the render target.
+// Also wires UI input (card taps, bids) back to session commands.
 // ====================================================================
 
-import type { PlayerPosition } from "@belote/core";
-import type { GameEvent, GameEventListener } from "@belote/app";
+import type { PlayerPosition, Suit, Card } from "@belote/core";
+import type { GameCommand, GameEvent, GameEventListener } from "@belote/app";
 import type { GameView, RoundSnapshot } from "./game-view.js";
 import { mapGameStateToView } from "./game-view.js";
 
@@ -14,6 +15,7 @@ import { mapGameStateToView } from "./game-view.js";
 /** Minimal session surface needed by the controller (decoupled from concrete GameSession). */
 export interface GameSessionAccess {
   on(listener: GameEventListener): () => void;
+  dispatch(command: GameCommand): void;
   readonly currentRound: RoundSnapshot | null;
   readonly game: { readonly teamScores: readonly [number, number] } | null;
 }
@@ -21,6 +23,13 @@ export interface GameSessionAccess {
 /** Any object that can receive a GameView update. */
 export interface RenderTarget {
   update(view: GameView): void;
+}
+
+/** Callback registration for UI interactions (decoupled from PixiJS). */
+export interface InputSource {
+  onCardTap(callback: (index: number, card: { suit: Suit; rank: string }) => void): void;
+  onSuitBid(callback: (suit: Suit) => void): void;
+  onPass(callback: () => void): void;
 }
 
 // ---- GameController -------------------------------------------------
@@ -48,6 +57,35 @@ export class GameController {
   stop(): void {
     this.unsubscribe?.();
     this.unsubscribe = null;
+  }
+
+  /** Wire UI input callbacks to session command dispatch. */
+  wireInput(input: InputSource): void {
+    input.onCardTap((_index, card) => {
+      this.session.dispatch({
+        type: "play_card",
+        playerPosition: 0 as PlayerPosition,
+        card: card as Card,
+      });
+    });
+
+    input.onSuitBid((suit) => {
+      this.session.dispatch({
+        type: "place_bid",
+        playerPosition: 0 as PlayerPosition,
+        bidType: "suit",
+        value: 80,
+        suit,
+      });
+    });
+
+    input.onPass(() => {
+      this.session.dispatch({
+        type: "place_bid",
+        playerPosition: 0 as PlayerPosition,
+        bidType: "pass",
+      });
+    });
   }
 
   // ---- Private helpers ------------------------------------------------

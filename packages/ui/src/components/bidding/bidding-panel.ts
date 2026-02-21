@@ -22,6 +22,8 @@ const BUTTON_RADIUS = 6;
 export class BiddingPanel extends Container {
   private suitButtonContainers: Container[] = [];
   private passButtonContainer: Container | undefined = undefined;
+  private suitBidCallback: ((suit: Suit) => void) | null = null;
+  private passCallback: (() => void) | null = null;
 
   constructor() {
     super();
@@ -78,6 +80,20 @@ export class BiddingPanel extends Container {
       "bid-pass",
     );
     this.addChild(this.passButtonContainer);
+
+    this.applyButtonInteraction();
+  }
+
+  /** Register a callback for when a suit button is tapped. */
+  onSuitBid(callback: (suit: Suit) => void): void {
+    this.suitBidCallback = callback;
+    this.applyButtonInteraction();
+  }
+
+  /** Register a callback for when the pass button is tapped. */
+  onPass(callback: () => void): void {
+    this.passCallback = callback;
+    this.applyButtonInteraction();
   }
 
   private createButton(
@@ -124,5 +140,28 @@ export class BiddingPanel extends Container {
 
   getPassButton(): Container | undefined {
     return this.passButtonContainer;
+  }
+
+  private applyButtonInteraction(): void {
+    for (const [i, container] of this.suitButtonContainers.entries()) {
+      container.eventMode = "static";
+      container.cursor = "pointer";
+      container.removeAllListeners("pointerdown");
+      container.on("pointerdown", () => {
+        const suit = ALL_SUITS[i];
+        if (suit && this.suitBidCallback) {
+          this.suitBidCallback(suit);
+        }
+      });
+    }
+
+    if (this.passButtonContainer) {
+      this.passButtonContainer.eventMode = "static";
+      this.passButtonContainer.cursor = "pointer";
+      this.passButtonContainer.removeAllListeners("pointerdown");
+      this.passButtonContainer.on("pointerdown", () => {
+        this.passCallback?.();
+      });
+    }
   }
 }

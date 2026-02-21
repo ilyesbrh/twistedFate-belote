@@ -23,6 +23,8 @@ export interface HandCard {
 export class HandDisplay extends Container {
   private readonly atlas: CardTextureAtlas;
   private cardSprites: CardSprite[] = [];
+  private currentCards: readonly HandCard[] = [];
+  private cardTapCallback: ((index: number, card: HandCard) => void) | null = null;
 
   constructor(atlas: CardTextureAtlas) {
     super();
@@ -41,6 +43,7 @@ export class HandDisplay extends Container {
       sprite.destroy();
     }
     this.cardSprites = [];
+    this.currentCards = cards;
 
     // Compute layout
     const layout = computeHandLayout(zone, cards.length);
@@ -64,10 +67,33 @@ export class HandDisplay extends Container {
       this.cardSprites.push(sprite);
       this.addChild(sprite);
     }
+
+    this.applyCardInteraction();
+  }
+
+  /** Register a callback for when a card is tapped. */
+  onCardTap(callback: (index: number, card: HandCard) => void): void {
+    this.cardTapCallback = callback;
+    this.applyCardInteraction();
   }
 
   /** Get all current card sprites (for interaction handling). */
   getCardSprites(): readonly CardSprite[] {
     return this.cardSprites;
+  }
+
+  private applyCardInteraction(): void {
+    if (!this.cardTapCallback) return;
+    for (const [i, sprite] of this.cardSprites.entries()) {
+      sprite.eventMode = "static";
+      sprite.cursor = "pointer";
+      sprite.removeAllListeners("pointerdown");
+      sprite.on("pointerdown", () => {
+        const card = this.currentCards[i];
+        if (card && this.cardTapCallback) {
+          this.cardTapCallback(i, card);
+        }
+      });
+    }
   }
 }
