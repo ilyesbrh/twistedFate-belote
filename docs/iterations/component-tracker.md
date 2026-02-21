@@ -20,3 +20,4 @@ Reference: [UI_LAYOUT_STRUCTURE.md](../UI_LAYOUT_STRUCTURE.md)
 | 21        | GameRenderer   | All     | Done   | game-view.ts, game-renderer.ts, stories               |
 | 22        | GameController | Bridge  | Done   | game-controller.ts, tests                             |
 | 23        | Input Wiring   | Bridge  | Done   | hand-display.ts, bidding-panel.ts, game-controller.ts |
+| 24        | Game Bootstrap | All     | Done   | game-renderer.ts, game-demo.scene.ts                  |

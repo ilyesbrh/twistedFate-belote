@@ -9,6 +9,7 @@ import { Container } from "pixi.js";
 import type { Suit } from "@belote/core";
 import type { Viewport, Rect, Seat } from "./layout.js";
 import type { CardTextureAtlas } from "./card-textures.js";
+import type { InputSource } from "./game-controller.js";
 import { TableLayout } from "./components/table/table-layout.js";
 import { HandDisplay } from "./components/hand/hand-display.js";
 import { OpponentHand } from "./components/opponent-hand/opponent-hand.js";
@@ -40,7 +41,7 @@ function teamColor(seat: Seat): number {
 
 // ---- GameRenderer ---------------------------------------------------
 
-export class GameRenderer {
+export class GameRenderer implements InputSource {
   private readonly tableLayout: TableLayout;
   private readonly handDisplay: HandDisplay;
   private readonly opponents: Map<Seat, OpponentHand>;
@@ -185,6 +186,20 @@ export class GameRenderer {
   /** Get hand display for event wiring. */
   getHandDisplay(): HandDisplay {
     return this.handDisplay;
+  }
+
+  // ---- InputSource implementation -------------------------------------
+
+  onCardTap(callback: (index: number, card: { suit: Suit; rank: string }) => void): void {
+    this.handDisplay.onCardTap(callback);
+  }
+
+  onSuitBid(callback: (suit: Suit) => void): void {
+    this.biddingPanel.onSuitBid(callback);
+  }
+
+  onPass(callback: () => void): void {
+    this.biddingPanel.onPass(callback);
   }
 
   // ---- Private helpers ------------------------------------------------

@@ -9,6 +9,7 @@ import { getScenes } from "./scenes.js";
 // Import scenes to trigger registration
 import "./table-background.scene.js";
 import "./card-gallery.scene.js";
+import "./game-demo.scene.js";
 
 let currentDestroy: (() => void) | undefined;
 
