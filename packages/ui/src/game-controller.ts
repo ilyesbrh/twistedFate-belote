@@ -1,0 +1,103 @@
+// ====================================================================
+// GameController — event-driven bridge between GameSession and renderer.
+// Subscribes to session events, tracks active turn, rebuilds GameView,
+// and pushes updates to the render target.
+// ====================================================================
+
+import type { PlayerPosition } from "@belote/core";
+import type { GameEvent, GameEventListener } from "@belote/app";
+import type { GameView, RoundSnapshot } from "./game-view.js";
+import { mapGameStateToView } from "./game-view.js";
+
+// ---- Interfaces -----------------------------------------------------
+
+/** Minimal session surface needed by the controller (decoupled from concrete GameSession). */
+export interface GameSessionAccess {
+  on(listener: GameEventListener): () => void;
+  readonly currentRound: RoundSnapshot | null;
+  readonly game: { readonly teamScores: readonly [number, number] } | null;
+}
+
+/** Any object that can receive a GameView update. */
+export interface RenderTarget {
+  update(view: GameView): void;
+}
+
+// ---- GameController -------------------------------------------------
+
+export class GameController {
+  private unsubscribe: (() => void) | null = null;
+  private activeTurn: PlayerPosition | null = null;
+  private dealerPosition: PlayerPosition | null = null;
+
+  constructor(
+    private readonly session: GameSessionAccess,
+    private readonly renderer: RenderTarget,
+    private readonly playerNames: readonly [string, string, string, string],
+  ) {}
+
+  /** Subscribe to session events and render the initial view. */
+  start(): void {
+    this.unsubscribe = this.session.on((event) => {
+      this.handleEvent(event);
+    });
+    this.refresh();
+  }
+
+  /** Unsubscribe from session events. */
+  stop(): void {
+    this.unsubscribe?.();
+    this.unsubscribe = null;
+  }
+
+  // ---- Private helpers ------------------------------------------------
+
+  private handleEvent(event: GameEvent): void {
+    this.trackActiveTurn(event);
+    this.refresh();
+  }
+
+  private trackActiveTurn(event: GameEvent): void {
+    switch (event.type) {
+      case "round_started":
+        this.dealerPosition = event.dealerPosition;
+        this.activeTurn = ((event.dealerPosition + 1) % 4) as PlayerPosition;
+        break;
+
+      case "bid_placed":
+        this.activeTurn = ((event.playerPosition + 1) % 4) as PlayerPosition;
+        break;
+
+      case "bidding_completed":
+        // In belote, the player after the dealer leads the first trick
+        if (this.dealerPosition !== null) {
+          this.activeTurn = ((this.dealerPosition + 1) % 4) as PlayerPosition;
+        }
+        break;
+
+      case "card_played":
+        this.activeTurn = ((event.playerPosition + 1) % 4) as PlayerPosition;
+        break;
+
+      case "trick_completed":
+        this.activeTurn = event.winnerPosition;
+        break;
+
+      case "round_completed":
+      case "round_cancelled":
+      case "game_completed":
+        this.activeTurn = null;
+        break;
+    }
+  }
+
+  private refresh(): void {
+    const view = mapGameStateToView({
+      round: this.session.currentRound,
+      scores: this.session.game?.teamScores ?? [0, 0],
+      playerNames: this.playerNames,
+      activeTurnPosition: this.activeTurn,
+    });
+    this.renderer.update(view);
+  }
+}
