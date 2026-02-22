@@ -82,6 +82,10 @@ export type {
 // Opponent Hand Display
 export { OpponentHand } from "./components/opponent-hand/opponent-hand.js";
 
+// Opponent Hand Display (React)
+export { OpponentHandReact } from "./components/opponent-hand/opponent-hand-react.js";
+export type { OpponentHandReactProps } from "./components/opponent-hand/opponent-hand-react.js";
+
 // Trick Layout
 export { computeTrickLayout } from "./components/trick/trick-layout.js";
 export type {

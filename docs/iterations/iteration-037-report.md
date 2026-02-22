@@ -68,12 +68,12 @@ Rewrite HandDisplay as a React component with card fan and tap interaction, usin
 
 ## Technical Decisions
 
-| Decision | Choice | Rationale |
-| --- | --- | --- |
-| createCardFaceGraphics vs CardSprite | Graphics drawing primitives | No atlas dependency; testable without Application; consistent with stories |
-| Imperative card mount via ref | ref callback + removeChildren | createCardFaceGraphics returns Container; can't use as JSX child |
-| Callback ref pattern | useRef for onCardTap | Prevents stale closures in pointerdown handlers |
-| Separate HandCardReact type | Own interface during migration | Avoids coupling to imperative HandCard; unified in cleanup |
+| Decision                             | Choice                         | Rationale                                                                  |
+| ------------------------------------ | ------------------------------ | -------------------------------------------------------------------------- |
+| createCardFaceGraphics vs CardSprite | Graphics drawing primitives    | No atlas dependency; testable without Application; consistent with stories |
+| Imperative card mount via ref        | ref callback + removeChildren  | createCardFaceGraphics returns Container; can't use as JSX child           |
+| Callback ref pattern                 | useRef for onCardTap           | Prevents stale closures in pointerdown handlers                            |
+| Separate HandCardReact type          | Own interface during migration | Avoids coupling to imperative HandCard; unified in cleanup                 |
 
 ## Refactoring Performed
 
