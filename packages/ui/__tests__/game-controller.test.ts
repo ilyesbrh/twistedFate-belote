@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import type { PlayerPosition, Suit, Card, Contract } from "@belote/core";
+import type { PlayerPosition, Suit, Card, Contract, RoundPhase } from "@belote/core";
 import type { GameEventListener, GameEvent, GameCommand } from "@belote/app";
 import type { GameView, RoundSnapshot } from "../src/game-view.js";
 import { GameController } from "../src/game-controller.js";
@@ -92,7 +92,7 @@ const PLAYER_NAMES: readonly [string, string, string, string] = ["You", "Ali", "
 
 // ---- Shared round factories -----------------------------------------
 
-function makeEmptyRound(phase: string): RoundSnapshot {
+function makeEmptyRound(phase: RoundPhase): RoundSnapshot {
   return {
     players: [
       { position: 0 as PlayerPosition, hand: [] },
@@ -106,7 +106,7 @@ function makeEmptyRound(phase: string): RoundSnapshot {
   };
 }
 
-function makeRoundWithCards(phase: string): RoundSnapshot {
+function makeRoundWithCards(phase: RoundPhase): RoundSnapshot {
   return {
     players: [
       { position: 0 as PlayerPosition, hand: [fakeCard("spades", "ace")] },
@@ -827,6 +827,23 @@ describe("GameController phase-gated input", () => {
     const controller = new GameController(session, renderer, PLAYER_NAMES);
 
     // No round set (null)
+    controller.wireInput(input);
+    controller.start();
+
+    input.fireCardTap(0, { suit: "spades" as Suit, rank: "ace" });
+    input.fireSuitBid("hearts");
+    input.firePass();
+
+    expect(session.dispatched).toHaveLength(0);
+  });
+
+  it("blocks all input during cancelled phase", () => {
+    const session = createMockSession();
+    const renderer = createMockRenderer();
+    const input = createMockInput();
+    const controller = new GameController(session, renderer, PLAYER_NAMES);
+
+    session.setRound(makeRoundWithCards("cancelled"));
     controller.wireInput(input);
     controller.start();
 

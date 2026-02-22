@@ -18,7 +18,8 @@ export interface ScorePanelOptions {
 
 // ---- Constants ------------------------------------------------------
 
-const PANEL_WIDTH = 100;
+export const SCORE_PANEL_WIDTH = 100;
+const PANEL_WIDTH = SCORE_PANEL_WIDTH;
 const PANEL_HEIGHT = 50;
 const PANEL_RADIUS = 6;
 const ROW_HEIGHT = 20;

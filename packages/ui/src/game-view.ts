@@ -5,7 +5,7 @@
 // ====================================================================
 
 import { deepFreeze } from "./deep-freeze.js";
-import type { PlayerPosition, Card, Suit, Trick } from "@belote/core";
+import type { PlayerPosition, Card, Suit, Trick, RoundPhase } from "@belote/core";
 import type { Seat } from "./layout.js";
 import type { HandCard } from "./components/hand/hand-display.js";
 import type { OpponentOrientation } from "./components/opponent-hand/opponent-layout.js";
@@ -48,7 +48,7 @@ export interface RoundSnapshot {
   }[];
   readonly contract: { readonly suit: Suit } | null;
   readonly currentTrick: Trick | null;
-  readonly phase: string;
+  readonly phase: RoundPhase;
 }
 
 export interface GameStateInput {
@@ -131,15 +131,20 @@ export function mapGameStateToView(input: GameStateInput): GameView {
     });
   }
 
-  // Map phase
-  const phase: GamePhase =
-    round.phase === "bidding"
-      ? "bidding"
-      : round.phase === "playing"
-        ? "playing"
-        : round.phase === "completed" || round.phase === "cancelled"
-          ? "completed"
-          : "idle";
+  // Map phase — "completed" and "cancelled" both map to UI "completed"
+  let phase: GamePhase;
+  switch (round.phase) {
+    case "bidding":
+      phase = "bidding";
+      break;
+    case "playing":
+      phase = "playing";
+      break;
+    case "completed":
+    case "cancelled":
+      phase = "completed";
+      break;
+  }
 
   // Active seat
   const activeSeat = activeTurnPosition !== null ? positionToSeat(activeTurnPosition) : null;

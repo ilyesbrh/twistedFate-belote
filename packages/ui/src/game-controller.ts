@@ -5,7 +5,7 @@
 // Also wires UI input (card taps, bids) back to session commands.
 // ====================================================================
 
-import type { PlayerPosition, Suit, Card } from "@belote/core";
+import type { PlayerPosition, Suit, Card, RoundPhase } from "@belote/core";
 import type { GameCommand, GameEvent, GameEventListener } from "@belote/app";
 import type { GameView, RoundSnapshot } from "./game-view.js";
 import { mapGameStateToView } from "./game-view.js";
@@ -134,7 +134,7 @@ export class GameController {
     }
   }
 
-  private currentPhase(): string | null {
+  private currentPhase(): RoundPhase | null {
     return this.session.currentRound?.phase ?? null;
   }
 

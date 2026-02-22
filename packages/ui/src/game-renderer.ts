@@ -15,7 +15,7 @@ import { HandDisplay } from "./components/hand/hand-display.js";
 import { OpponentHand } from "./components/opponent-hand/opponent-hand.js";
 import { TrickDisplay } from "./components/trick/trick-display.js";
 import { PlayerInfo, teamForSeat } from "./components/player-info/player-info.js";
-import { ScorePanel } from "./components/hud/score-panel.js";
+import { ScorePanel, SCORE_PANEL_WIDTH } from "./components/hud/score-panel.js";
 import { TrumpIndicator } from "./components/hud/trump-indicator.js";
 import { TurnIndicator } from "./components/hud/turn-indicator.js";
 import { BiddingPanel } from "./components/bidding/bidding-panel.js";
@@ -59,7 +59,6 @@ export class GameRenderer implements InputSource {
     // Root table layout
     this.tableLayout = new TableLayout(viewport);
     const zones = this.tableLayout.getZones();
-    const layout = this.tableLayout.getLayout();
 
     // Hand display (bottom zone)
     this.handDisplay = new HandDisplay(atlas);
@@ -110,8 +109,6 @@ export class GameRenderer implements InputSource {
       team1Label: "Us",
       team2Label: "Them",
     });
-    this.scorePanel.x = layout.zones.top.width - 108;
-    this.scorePanel.y = THEME.spacing.xs;
     zones.top.addChild(this.scorePanel);
 
     // Bidding panel (bottom zone, initially hidden)
@@ -155,7 +152,7 @@ export class GameRenderer implements InputSource {
     }
 
     // Score panel — reposition on every update (handles resize)
-    this.scorePanel.x = layout.zones.top.width - 108;
+    this.scorePanel.x = layout.zones.top.width - SCORE_PANEL_WIDTH - THEME.spacing.sm;
     this.scorePanel.y = THEME.spacing.xs;
     this.scorePanel.setScores(view.scores.team1, view.scores.team2);
 
