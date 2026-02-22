@@ -1,7 +1,7 @@
 import { extend } from "@pixi/react";
 import { Container, Graphics, Text, Sprite } from "pixi.js";
 import { LayoutContainer } from "@pixi/layout/components";
-import { FancyButton, ButtonContainer } from "@pixi/ui";
+import { FancyButton, ButtonContainer, MaskedFrame, Dialog } from "@pixi/ui";
 
 /**
  * Register PixiJS display objects, layout components, and UI widgets
@@ -21,5 +21,7 @@ export function initPixiReact(): void {
     // @pixi/ui
     FancyButton,
     ButtonContainer,
+    MaskedFrame,
+    Dialog,
   });
 }

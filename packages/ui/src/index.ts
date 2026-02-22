@@ -52,6 +52,10 @@ export type { CardTextureAtlas } from "./card-textures.js";
 export { pipPositions } from "./pip-layout.js";
 export type { PipPosition } from "./pip-layout.js";
 
+// Card Frame (MaskedFrame wrapper)
+export { createMaskedCard } from "./card-frame.js";
+export type { CardFrameOptions } from "./card-frame.js";
+
 // Card Sprite
 export { CardSprite, cardLabel, CARD_BACK_LABEL } from "./card-sprite.js";
 
@@ -162,6 +166,15 @@ export {
   suitButtonConfig,
 } from "./components/bidding/bidding-panel-react.js";
 export type { BiddingPanelReactProps } from "./components/bidding/bidding-panel-react.js";
+
+// Bidding Dialog (React — modal @pixi/ui Dialog)
+export {
+  BiddingDialogReact,
+  createDialogBackground,
+  suitBidButtonOptions,
+  passBidButtonOptions,
+} from "./components/bidding/bidding-dialog-react.js";
+export type { BiddingDialogReactProps } from "./components/bidding/bidding-dialog-react.js";
 
 // Table Layout (root)
 export { TableLayout } from "./components/table/table-layout.js";

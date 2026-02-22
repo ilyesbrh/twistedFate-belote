@@ -10,6 +10,7 @@ import type { Container } from "pixi.js";
 import type { Suit, Rank } from "@belote/core";
 import type { Rect } from "../../layout.js";
 import { createCardFaceGraphics } from "../../card-textures.js";
+import { createMaskedCard } from "../../card-frame.js";
 import { computeHandLayout } from "./hand-layout.js";
 
 // ---- Types ----------------------------------------------------------
@@ -72,16 +73,15 @@ export function HandDisplayReact({
 
       const gfx = createCardFaceGraphics(card.suit, card.rank);
       gfx.label = `card-${card.suit}-${card.rank}`;
-      gfx.pivot.set(gfx.width / 2, gfx.height / 2);
 
-      const pos = layout.cards[index];
-      if (!pos) return;
+      const frame = createMaskedCard({
+        content: gfx,
+        width: layout.cardWidth,
+        height: layout.cardHeight,
+      });
+      frame.pivot.set(layout.cardWidth / 2, layout.cardHeight / 2);
 
-      const scaleX = layout.cardWidth / gfx.width;
-      const scaleY = layout.cardHeight / gfx.height;
-      gfx.scale.set(scaleX, scaleY);
-
-      containerEl.addChild(gfx);
+      containerEl.addChild(frame);
     },
     [cards, layout],
   );

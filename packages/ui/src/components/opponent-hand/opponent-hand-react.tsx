@@ -9,6 +9,7 @@ import { useCallback, useRef } from "react";
 import type { Container } from "pixi.js";
 import type { Rect } from "../../layout.js";
 import { createCardBackGraphics } from "../../card-textures.js";
+import { createMaskedCard } from "../../card-frame.js";
 import { computeOpponentLayout } from "./opponent-layout.js";
 import type { OpponentOrientation } from "./opponent-layout.js";
 
@@ -46,13 +47,19 @@ export function OpponentHandReact({
 
       const gfx = createCardBackGraphics();
       gfx.label = `card-back-${String(index)}`;
-      gfx.pivot.set(gfx.width / 2, gfx.height / 2);
 
-      const scaleX = (layout.cardWidth * pos.scale) / gfx.width;
-      const scaleY = (layout.cardHeight * pos.scale) / gfx.height;
-      gfx.scale.set(scaleX, scaleY);
+      const scaledWidth = layout.cardWidth * pos.scale;
+      const scaledHeight = layout.cardHeight * pos.scale;
 
-      containerEl.addChild(gfx);
+      const frame = createMaskedCard({
+        content: gfx,
+        width: scaledWidth,
+        height: scaledHeight,
+        borderColor: 0xffd54f, // Gold border for card backs
+      });
+      frame.pivot.set(scaledWidth / 2, scaledHeight / 2);
+
+      containerEl.addChild(frame);
     },
     [layout],
   );

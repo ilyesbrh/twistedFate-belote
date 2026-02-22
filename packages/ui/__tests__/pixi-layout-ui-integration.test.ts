@@ -50,8 +50,33 @@ describe("@pixi/ui integration", () => {
   });
 });
 
+describe("@pixi/ui MaskedFrame integration", () => {
+  it("MaskedFrame is importable and constructible", async () => {
+    const { MaskedFrame } = await import("@pixi/ui");
+    expect(MaskedFrame).toBeTypeOf("function");
+    const frame = new MaskedFrame();
+    expect(frame).toBeDefined();
+    frame.destroy();
+  });
+});
+
+describe("@pixi/ui Dialog integration", () => {
+  it("Dialog is importable and constructible", async () => {
+    const { Graphics } = await import("pixi.js");
+    const { Dialog } = await import("@pixi/ui");
+    expect(Dialog).toBeTypeOf("function");
+    const bg = new Graphics();
+    bg.roundRect(0, 0, 100, 100, 10);
+    bg.fill(0xffffff);
+    const dialog = new Dialog({ background: bg });
+    expect(dialog).toBeDefined();
+    // Note: dialog.destroy() has internal side effects in headless env;
+    // construction proves the class is usable.
+  });
+});
+
 describe("pixi-react-setup includes layout/ui elements", () => {
-  it("initPixiReact registers LayoutContainer and FancyButton without throwing", async () => {
+  it("initPixiReact registers LayoutContainer, FancyButton, MaskedFrame, and Dialog without throwing", async () => {
     const { initPixiReact } = await import("../src/pixi-react-setup.js");
     expect(() => {
       initPixiReact();
