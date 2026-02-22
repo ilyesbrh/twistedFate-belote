@@ -52,11 +52,11 @@ Rewrite PlayerInfo as a React functional component with avatar, initial letter, 
 
 ## Technical Decisions
 
-| Decision | Choice | Rationale |
-| --- | --- | --- |
-| isActive deferred | `_isActive` prefix, no filter logic | GlowFilter requires WebGL context; will be activated in iteration 38 |
-| playerInitial extracted | Pure function | Testable edge case (empty string); avoids inline logic in JSX |
-| teamColor as prop | Explicit rather than computed | Keeps component pure; caller decides how to determine team color |
+| Decision                | Choice                              | Rationale                                                            |
+| ----------------------- | ----------------------------------- | -------------------------------------------------------------------- |
+| isActive deferred       | `_isActive` prefix, no filter logic | GlowFilter requires WebGL context; will be activated in iteration 38 |
+| playerInitial extracted | Pure function                       | Testable edge case (empty string); avoids inline logic in JSX        |
+| teamColor as prop       | Explicit rather than computed       | Keeps component pure; caller decides how to determine team color     |
 
 ## Refactoring Performed
 

@@ -181,3 +181,7 @@ export { initPixiReact } from "./pixi-react-setup.js";
 
 // React hooks
 export { useTheme } from "./hooks/use-theme.js";
+
+// Storybook helpers (React bridge for imperative components)
+export { StoryCanvas } from "./storybook-helpers.js";
+export type { StoryCanvasProps } from "./storybook-helpers.js";

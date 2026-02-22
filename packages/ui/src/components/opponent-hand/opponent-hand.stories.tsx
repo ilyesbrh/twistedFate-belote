@@ -1,10 +1,11 @@
-import type { StoryFn, Meta } from "@pixi/storybook-renderer";
+import type { StoryFn, Meta } from "@storybook/react";
 import { Container, Graphics, Text } from "pixi.js";
 import { THEME } from "../../theme.js";
 import { createCardBackGraphics } from "../../card-textures.js";
 import { computeOpponentLayout } from "./opponent-layout.js";
 import type { OpponentOrientation } from "./opponent-layout.js";
 import type { Rect } from "../../layout.js";
+import { StoryCanvas } from "../../storybook-helpers.js";
 
 const meta: Meta = {
   title: "Components/OpponentHand",
@@ -14,11 +15,11 @@ export default meta;
 
 // ---- Helpers --------------------------------------------------------
 
-function buildOpponentStory(
+function buildOpponentView(
   zone: Rect,
   cardCount: number,
   orientation: OpponentOrientation,
-): { view: Container } {
+): Container {
   const root = new Container();
   root.label = "opponent-story-root";
 
@@ -31,7 +32,7 @@ function buildOpponentStory(
 
   // Zone label
   const zoneLabel = new Text({
-    text: `${orientation} ${String(zone.width)}×${String(zone.height)} (${String(cardCount)} cards)`,
+    text: `${orientation} ${String(zone.width)}\u00d7${String(zone.height)} (${String(cardCount)} cards)`,
     style: {
       fontFamily: THEME.typography.fontFamily,
       fontSize: THEME.typography.label.minSize,
@@ -65,37 +66,42 @@ function buildOpponentStory(
     root.addChild(cardGfx);
   }
 
-  return { view: root };
+  return root;
 }
 
 // ---- Stories --------------------------------------------------------
 
 /** Top opponent — 8 face-down cards in horizontal stack. */
-export const HorizontalFull: StoryFn = (): { view: Container } => {
-  const zone: Rect = { x: 0, y: 0, width: 844, height: 70 };
-  return buildOpponentStory(zone, 8, "horizontal");
-};
+export const HorizontalFull: StoryFn = () => (
+  <StoryCanvas
+    createView={() => buildOpponentView({ x: 0, y: 0, width: 844, height: 70 }, 8, "horizontal")}
+  />
+);
 
 /** Top opponent — 4 cards remaining (mid-game). */
-export const HorizontalFour: StoryFn = (): { view: Container } => {
-  const zone: Rect = { x: 0, y: 0, width: 844, height: 70 };
-  return buildOpponentStory(zone, 4, "horizontal");
-};
+export const HorizontalFour: StoryFn = () => (
+  <StoryCanvas
+    createView={() => buildOpponentView({ x: 0, y: 0, width: 844, height: 70 }, 4, "horizontal")}
+  />
+);
 
 /** Left opponent — 8 face-down cards in vertical stack. */
-export const VerticalLeft: StoryFn = (): { view: Container } => {
-  const zone: Rect = { x: 0, y: 70, width: 127, height: 211 };
-  return buildOpponentStory(zone, 8, "vertical");
-};
+export const VerticalLeft: StoryFn = () => (
+  <StoryCanvas
+    createView={() => buildOpponentView({ x: 0, y: 70, width: 127, height: 211 }, 8, "vertical")}
+  />
+);
 
 /** Right opponent — 8 face-down cards in vertical stack. */
-export const VerticalRight: StoryFn = (): { view: Container } => {
-  const zone: Rect = { x: 717, y: 70, width: 127, height: 211 };
-  return buildOpponentStory(zone, 8, "vertical");
-};
+export const VerticalRight: StoryFn = () => (
+  <StoryCanvas
+    createView={() => buildOpponentView({ x: 717, y: 70, width: 127, height: 211 }, 8, "vertical")}
+  />
+);
 
 /** Side opponent — 3 cards remaining (late game). */
-export const VerticalThree: StoryFn = (): { view: Container } => {
-  const zone: Rect = { x: 0, y: 70, width: 127, height: 211 };
-  return buildOpponentStory(zone, 3, "vertical");
-};
+export const VerticalThree: StoryFn = () => (
+  <StoryCanvas
+    createView={() => buildOpponentView({ x: 0, y: 70, width: 127, height: 211 }, 3, "vertical")}
+  />
+);

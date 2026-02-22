@@ -1,7 +1,8 @@
-import type { StoryFn, Meta } from "@pixi/storybook-renderer";
+import type { StoryFn, Meta } from "@storybook/react";
 import { Container, Text } from "pixi.js";
 import { THEME } from "../../theme.js";
 import type { TurnSeat } from "./turn-indicator.js";
+import { StoryCanvas } from "../../storybook-helpers.js";
 
 const meta: Meta = {
   title: "Components/HUD/TurnIndicator",
@@ -61,28 +62,36 @@ function buildTurnIndicator(
 // ---- Stories --------------------------------------------------------
 
 /** Your turn (south). */
-export const YourTurn: StoryFn = (): { view: Container } => {
-  const root = new Container();
-  root.label = "story-root";
-  root.addChild(buildTurnIndicator("south", "Your turn", 60, 40));
-  return { view: root };
-};
+export const YourTurn: StoryFn = () => (
+  <StoryCanvas
+    createView={() => {
+      const root = new Container();
+      root.label = "story-root";
+      root.addChild(buildTurnIndicator("south", "Your turn", 60, 40));
+      return root;
+    }}
+  />
+);
 
 /** All directions. */
-export const AllDirections: StoryFn = (): { view: Container } => {
-  const root = new Container();
-  root.label = "story-root";
+export const AllDirections: StoryFn = () => (
+  <StoryCanvas
+    createView={() => {
+      const root = new Container();
+      root.label = "story-root";
 
-  const seats: { seat: TurnSeat; name: string }[] = [
-    { seat: "south", name: "You" },
-    { seat: "north", name: "Partner" },
-    { seat: "west", name: "Opponent L" },
-    { seat: "east", name: "Opponent R" },
-  ];
+      const seats: { seat: TurnSeat; name: string }[] = [
+        { seat: "south", name: "You" },
+        { seat: "north", name: "Partner" },
+        { seat: "west", name: "Opponent L" },
+        { seat: "east", name: "Opponent R" },
+      ];
 
-  seats.forEach((s, i) => {
-    root.addChild(buildTurnIndicator(s.seat, s.name, 60 + i * 100, 40));
-  });
+      seats.forEach((s, i) => {
+        root.addChild(buildTurnIndicator(s.seat, s.name, 60 + i * 100, 40));
+      });
 
-  return { view: root };
-};
+      return root;
+    }}
+  />
+);

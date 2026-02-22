@@ -1,4 +1,4 @@
-import type { StoryFn, Meta } from "@pixi/storybook-renderer";
+import type { StoryFn, Meta } from "@storybook/react";
 import { Container, Graphics, Text } from "pixi.js";
 import { THEME } from "../../theme.js";
 import { createCardFaceGraphics } from "../../card-textures.js";
@@ -6,6 +6,7 @@ import { computeTrickLayout } from "./trick-layout.js";
 import type { TrickPosition } from "./trick-layout.js";
 import type { Rect } from "../../layout.js";
 import type { Suit, Rank } from "@belote/core";
+import { StoryCanvas } from "../../storybook-helpers.js";
 
 const meta: Meta = {
   title: "Components/TrickDisplay",
@@ -21,7 +22,7 @@ interface StoryTrickCard {
   readonly rank: Rank;
 }
 
-function buildTrickStory(zone: Rect, playedCards: readonly StoryTrickCard[]): { view: Container } {
+function buildTrickView(zone: Rect, playedCards: readonly StoryTrickCard[]): Container {
   const root = new Container();
   root.label = "trick-story-root";
 
@@ -34,7 +35,7 @@ function buildTrickStory(zone: Rect, playedCards: readonly StoryTrickCard[]): { 
 
   // Zone label
   const zoneLabel = new Text({
-    text: `Center Zone: ${String(zone.width)}×${String(zone.height)}`,
+    text: `Center Zone: ${String(zone.width)}\u00d7${String(zone.height)}`,
     style: {
       fontFamily: THEME.typography.fontFamily,
       fontSize: THEME.typography.label.minSize,
@@ -78,7 +79,7 @@ function buildTrickStory(zone: Rect, playedCards: readonly StoryTrickCard[]): { 
     root.addChild(cardGfx);
   }
 
-  return { view: root };
+  return root;
 }
 
 // ---- Stories --------------------------------------------------------
@@ -86,29 +87,37 @@ function buildTrickStory(zone: Rect, playedCards: readonly StoryTrickCard[]): { 
 const CENTER: Rect = { x: 127, y: 70, width: 590, height: 211 };
 
 /** Empty trick — just slot markers visible. */
-export const Empty: StoryFn = (): { view: Container } => {
-  return buildTrickStory(CENTER, []);
-};
+export const Empty: StoryFn = () => <StoryCanvas createView={() => buildTrickView(CENTER, [])} />;
 
 /** One card played (human leads). */
-export const OneCard: StoryFn = (): { view: Container } => {
-  return buildTrickStory(CENTER, [{ position: "south", suit: "hearts", rank: "ace" }]);
-};
+export const OneCard: StoryFn = () => (
+  <StoryCanvas
+    createView={() => buildTrickView(CENTER, [{ position: "south", suit: "hearts", rank: "ace" }])}
+  />
+);
 
 /** Two cards played. */
-export const TwoCards: StoryFn = (): { view: Container } => {
-  return buildTrickStory(CENTER, [
-    { position: "south", suit: "hearts", rank: "ace" },
-    { position: "west", suit: "hearts", rank: "king" },
-  ]);
-};
+export const TwoCards: StoryFn = () => (
+  <StoryCanvas
+    createView={() =>
+      buildTrickView(CENTER, [
+        { position: "south", suit: "hearts", rank: "ace" },
+        { position: "west", suit: "hearts", rank: "king" },
+      ])
+    }
+  />
+);
 
 /** Full trick — all 4 cards played. */
-export const FullTrick: StoryFn = (): { view: Container } => {
-  return buildTrickStory(CENTER, [
-    { position: "south", suit: "hearts", rank: "ace" },
-    { position: "west", suit: "hearts", rank: "king" },
-    { position: "north", suit: "hearts", rank: "10" },
-    { position: "east", suit: "spades", rank: "jack" },
-  ]);
-};
+export const FullTrick: StoryFn = () => (
+  <StoryCanvas
+    createView={() =>
+      buildTrickView(CENTER, [
+        { position: "south", suit: "hearts", rank: "ace" },
+        { position: "west", suit: "hearts", rank: "king" },
+        { position: "north", suit: "hearts", rank: "10" },
+        { position: "east", suit: "spades", rank: "jack" },
+      ])
+    }
+  />
+);

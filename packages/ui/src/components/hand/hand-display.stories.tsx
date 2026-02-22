@@ -1,10 +1,11 @@
-import type { StoryFn, Meta } from "@pixi/storybook-renderer";
+import type { StoryFn, Meta } from "@storybook/react";
 import { Container, Graphics, Text } from "pixi.js";
 import type { Suit, Rank } from "@belote/core";
 import { THEME } from "../../theme.js";
 import { createCardFaceGraphics } from "../../card-textures.js";
 import { computeHandLayout } from "./hand-layout.js";
 import type { Rect } from "../../layout.js";
+import { StoryCanvas } from "../../storybook-helpers.js";
 
 const meta: Meta = {
   title: "Components/HandDisplay",
@@ -27,10 +28,7 @@ const FULL_HAND: readonly { suit: Suit; rank: Rank }[] = [
 ];
 
 /** Builds a visual hand fan using layout math + drawing primitives. */
-function buildHandStory(
-  zone: Rect,
-  cards: readonly { suit: Suit; rank: Rank }[],
-): { view: Container } {
+function buildHandView(zone: Rect, cards: readonly { suit: Suit; rank: Rank }[]): Container {
   const root = new Container();
   root.label = "hand-story-root";
 
@@ -43,7 +41,7 @@ function buildHandStory(
 
   // Zone label
   const zoneLabel = new Text({
-    text: `Bottom Zone: ${String(zone.width)}×${String(zone.height)}`,
+    text: `Bottom Zone: ${String(zone.width)}\u00d7${String(zone.height)}`,
     style: {
       fontFamily: THEME.typography.fontFamily,
       fontSize: THEME.typography.label.minSize,
@@ -80,37 +78,48 @@ function buildHandStory(
     root.addChild(cardGfx);
   }
 
-  return { view: root };
+  return root;
 }
 
 // ---- Stories --------------------------------------------------------
 
 /** 8 cards — full belote hand at baseline (844x390 landscape). */
-export const FullHand: StoryFn = (): { view: Container } => {
-  const zone: Rect = { x: 0, y: 281, width: 844, height: 109 };
-  return buildHandStory(zone, FULL_HAND);
-};
+export const FullHand: StoryFn = () => (
+  <StoryCanvas
+    createView={() => buildHandView({ x: 0, y: 281, width: 844, height: 109 }, FULL_HAND)}
+  />
+);
 
 /** 5 cards — mid-game hand. */
-export const FiveCards: StoryFn = (): { view: Container } => {
-  const zone: Rect = { x: 0, y: 281, width: 844, height: 109 };
-  return buildHandStory(zone, FULL_HAND.slice(0, 5));
-};
+export const FiveCards: StoryFn = () => (
+  <StoryCanvas
+    createView={() =>
+      buildHandView({ x: 0, y: 281, width: 844, height: 109 }, FULL_HAND.slice(0, 5))
+    }
+  />
+);
 
 /** 3 cards — late game hand. */
-export const ThreeCards: StoryFn = (): { view: Container } => {
-  const zone: Rect = { x: 0, y: 281, width: 844, height: 109 };
-  return buildHandStory(zone, FULL_HAND.slice(0, 3));
-};
+export const ThreeCards: StoryFn = () => (
+  <StoryCanvas
+    createView={() =>
+      buildHandView({ x: 0, y: 281, width: 844, height: 109 }, FULL_HAND.slice(0, 3))
+    }
+  />
+);
 
 /** 1 card — last card. */
-export const SingleCard: StoryFn = (): { view: Container } => {
-  const zone: Rect = { x: 0, y: 281, width: 844, height: 109 };
-  return buildHandStory(zone, FULL_HAND.slice(0, 1));
-};
+export const SingleCard: StoryFn = () => (
+  <StoryCanvas
+    createView={() =>
+      buildHandView({ x: 0, y: 281, width: 844, height: 109 }, FULL_HAND.slice(0, 1))
+    }
+  />
+);
 
 /** Portrait zone — narrower, taller. */
-export const PortraitZone: StoryFn = (): { view: Container } => {
-  const zone: Rect = { x: 0, y: 549, width: 390, height: 295 };
-  return buildHandStory(zone, FULL_HAND);
-};
+export const PortraitZone: StoryFn = () => (
+  <StoryCanvas
+    createView={() => buildHandView({ x: 0, y: 549, width: 390, height: 295 }, FULL_HAND)}
+  />
+);

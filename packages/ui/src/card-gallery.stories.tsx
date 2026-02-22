@@ -1,8 +1,9 @@
-import type { StoryFn, Meta } from "@pixi/storybook-renderer";
+import type { StoryFn, Meta } from "@storybook/react";
 import { Container } from "pixi.js";
 import { ALL_SUITS, ALL_RANKS } from "@belote/core";
 import { THEME } from "./theme.js";
 import { createCardFaceGraphics, createCardBackGraphics } from "./card-textures.js";
+import { StoryCanvas } from "./storybook-helpers.js";
 
 const meta: Meta = {
   title: "Cards/Gallery",
@@ -42,28 +43,26 @@ function layoutGrid(grid: Container, width: number, height: number): void {
   }
 }
 
-export const Default: StoryFn = () => {
-  const grid = new Container();
-  grid.label = "card-gallery-grid";
+export const Default: StoryFn = () => (
+  <StoryCanvas
+    createView={() => {
+      const grid = new Container();
+      grid.label = "card-gallery-grid";
 
-  for (const suit of ALL_SUITS) {
-    for (const rank of ALL_RANKS) {
-      const card = createCardFaceGraphics(suit, rank);
-      card.label = `card-${suit}-${rank}`;
-      grid.addChild(card);
-    }
-  }
+      for (const suit of ALL_SUITS) {
+        for (const rank of ALL_RANKS) {
+          const card = createCardFaceGraphics(suit, rank);
+          card.label = `card-${suit}-${rank}`;
+          grid.addChild(card);
+        }
+      }
 
-  const back = createCardBackGraphics();
-  back.label = "card-back-sample";
-  grid.addChild(back);
+      const back = createCardBackGraphics();
+      back.label = "card-back-sample";
+      grid.addChild(back);
 
-  layoutGrid(grid, 800, 600);
-
-  return {
-    view: grid,
-    resize(w: number, h: number) {
-      layoutGrid(grid, w, h);
-    },
-  };
-};
+      layoutGrid(grid, 800, 600);
+      return grid;
+    }}
+  />
+);

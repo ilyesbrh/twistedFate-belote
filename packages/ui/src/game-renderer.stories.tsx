@@ -1,4 +1,4 @@
-import type { StoryFn, Meta } from "@pixi/storybook-renderer";
+import type { StoryFn, Meta } from "@storybook/react";
 import { Container, Graphics, Text } from "pixi.js";
 import type { Suit, Rank } from "@belote/core";
 import { ALL_SUITS } from "@belote/core";
@@ -15,6 +15,7 @@ import { computeHandLayout } from "./components/hand/hand-layout.js";
 import { computeOpponentLayout } from "./components/opponent-hand/opponent-layout.js";
 import { computeTrickLayout } from "./components/trick/trick-layout.js";
 import { computeBiddingLayout } from "./components/bidding/bidding-layout.js";
+import { StoryCanvas } from "./storybook-helpers.js";
 
 const meta: Meta = {
   title: "Integration/GameRenderer",
@@ -241,7 +242,7 @@ function drawTurnArrow(root: Container, x: number, y: number, name: string): voi
 
 // ---- Full table builder ---------------------------------------------
 
-function buildFullTable(viewport: Viewport): { view: Container } {
+function buildFullTable(viewport: Viewport): Container {
   const root = new Container();
   root.label = "game-renderer-story";
 
@@ -333,124 +334,142 @@ function buildFullTable(viewport: Viewport): { view: Container } {
   info.label = "viewport-info";
   root.addChild(info);
 
-  return { view: root };
+  return root;
 }
 
 // ---- Stories --------------------------------------------------------
 
 /** Full table — 844x390 baseline (playing phase, all components visible). */
-export const PlayingPhase: StoryFn = (): { view: Container } => {
-  return buildFullTable({ width: 844, height: 390 });
-};
+export const PlayingPhase: StoryFn = () => (
+  <StoryCanvas
+    width={844}
+    height={390}
+    createView={() => buildFullTable({ width: 844, height: 390 })}
+  />
+);
 
 /** Full table — portrait fallback. */
-export const PortraitFallback: StoryFn = (): { view: Container } => {
-  return buildFullTable({ width: 390, height: 844 });
-};
+export const PortraitFallback: StoryFn = () => (
+  <StoryCanvas
+    width={390}
+    height={844}
+    createView={() => buildFullTable({ width: 390, height: 844 })}
+  />
+);
 
 /** Full table — tablet landscape. */
-export const TabletLandscape: StoryFn = (): { view: Container } => {
-  return buildFullTable({ width: 1024, height: 768 });
-};
+export const TabletLandscape: StoryFn = () => (
+  <StoryCanvas
+    width={1024}
+    height={768}
+    createView={() => buildFullTable({ width: 1024, height: 768 })}
+  />
+);
 
 /** Bidding phase — suit buttons visible in bottom zone. */
-export const BiddingPhase: StoryFn = (): { view: Container } => {
-  const viewport: Viewport = { width: 844, height: 390 };
-  const root = new Container();
-  root.label = "bidding-story";
+export const BiddingPhase: StoryFn = () => (
+  <StoryCanvas
+    width={844}
+    height={390}
+    createView={() => {
+      const viewport: Viewport = { width: 844, height: 390 };
+      const root = new Container();
+      root.label = "bidding-story";
 
-  const layout = computeLayout(viewport);
-  const z = layout.zones;
+      const layout = computeLayout(viewport);
+      const z = layout.zones;
 
-  drawBackground(root, viewport);
-  drawZoneOutlines(root, layout);
+      drawBackground(root, viewport);
+      drawZoneOutlines(root, layout);
 
-  // Opponents (but no hand — bidding phase)
-  drawOpponent(root, z.top, "horizontal", 8);
-  drawOpponent(root, z.left, "vertical", 8);
-  drawOpponent(root, z.right, "vertical", 8);
+      // Opponents (but no hand — bidding phase)
+      drawOpponent(root, z.top, "horizontal", 8);
+      drawOpponent(root, z.left, "vertical", 8);
+      drawOpponent(root, z.right, "vertical", 8);
 
-  // Player info
-  drawPlayerInfo(
-    root,
-    z.bottom.x + THEME.spacing.lg,
-    z.bottom.y + THEME.spacing.lg,
-    "You",
-    true,
-    0x2e7d32,
-  );
-  drawPlayerInfo(
-    root,
-    z.top.x + THEME.spacing.lg,
-    z.top.y + THEME.spacing.lg,
-    "Partner",
-    false,
-    0x2e7d32,
-  );
-  drawPlayerInfo(
-    root,
-    z.left.x + z.left.width / 2,
-    z.left.y + THEME.spacing.lg,
-    "Ali",
-    false,
-    0x1565c0,
-  );
-  drawPlayerInfo(
-    root,
-    z.right.x + z.right.width / 2,
-    z.right.y + THEME.spacing.lg,
-    "Omar",
-    false,
-    0x1565c0,
-  );
+      // Player info
+      drawPlayerInfo(
+        root,
+        z.bottom.x + THEME.spacing.lg,
+        z.bottom.y + THEME.spacing.lg,
+        "You",
+        true,
+        0x2e7d32,
+      );
+      drawPlayerInfo(
+        root,
+        z.top.x + THEME.spacing.lg,
+        z.top.y + THEME.spacing.lg,
+        "Partner",
+        false,
+        0x2e7d32,
+      );
+      drawPlayerInfo(
+        root,
+        z.left.x + z.left.width / 2,
+        z.left.y + THEME.spacing.lg,
+        "Ali",
+        false,
+        0x1565c0,
+      );
+      drawPlayerInfo(
+        root,
+        z.right.x + z.right.width / 2,
+        z.right.y + THEME.spacing.lg,
+        "Omar",
+        false,
+        0x1565c0,
+      );
 
-  // Bidding buttons in bottom zone
-  const biddingLayout = computeBiddingLayout(z.bottom);
-  for (const [i, suit] of ALL_SUITS.entries()) {
-    const btnRect = biddingLayout.suitButtons[i];
-    if (!btnRect) continue;
-    const btn = new Graphics();
-    btn.roundRect(btnRect.x, btnRect.y, btnRect.width, btnRect.height, 6);
-    btn.fill(THEME.colors.ui.overlayLight);
-    btn.label = `bid-${suit}`;
-    root.addChild(btn);
+      // Bidding buttons in bottom zone
+      const biddingLayout = computeBiddingLayout(z.bottom);
+      for (const [i, suit] of ALL_SUITS.entries()) {
+        const btnRect = biddingLayout.suitButtons[i];
+        if (!btnRect) continue;
+        const btn = new Graphics();
+        btn.roundRect(btnRect.x, btnRect.y, btnRect.width, btnRect.height, 6);
+        btn.fill(THEME.colors.ui.overlayLight);
+        btn.label = `bid-${suit}`;
+        root.addChild(btn);
 
-    const sym = new Text({
-      text: suitSymbol(suit),
-      style: {
-        fontFamily: THEME.typography.fontFamily,
-        fontSize: THEME.typography.heading.minSize,
-        fill: suitColor(suit),
-      },
-    });
-    sym.anchor.set(0.5);
-    sym.x = btnRect.x + btnRect.width / 2;
-    sym.y = btnRect.y + btnRect.height / 2;
-    root.addChild(sym);
-  }
+        const sym = new Text({
+          text: suitSymbol(suit),
+          style: {
+            fontFamily: THEME.typography.fontFamily,
+            fontSize: THEME.typography.heading.minSize,
+            fill: suitColor(suit),
+          },
+        });
+        sym.anchor.set(0.5);
+        sym.x = btnRect.x + btnRect.width / 2;
+        sym.y = btnRect.y + btnRect.height / 2;
+        root.addChild(sym);
+      }
 
-  const passRect = biddingLayout.passButton;
-  const passBg = new Graphics();
-  passBg.roundRect(passRect.x, passRect.y, passRect.width, passRect.height, 6);
-  passBg.fill(THEME.colors.ui.overlayLight);
-  passBg.label = "bid-pass";
-  root.addChild(passBg);
+      const passRect = biddingLayout.passButton;
+      const passBg = new Graphics();
+      passBg.roundRect(passRect.x, passRect.y, passRect.width, passRect.height, 6);
+      passBg.fill(THEME.colors.ui.overlayLight);
+      passBg.label = "bid-pass";
+      root.addChild(passBg);
 
-  const passLabel = new Text({
-    text: "Pass",
-    style: {
-      fontFamily: THEME.typography.fontFamily,
-      fontSize: THEME.typography.heading.minSize,
-      fill: THEME.colors.text.muted,
-    },
-  });
-  passLabel.anchor.set(0.5);
-  passLabel.x = passRect.x + passRect.width / 2;
-  passLabel.y = passRect.y + passRect.height / 2;
-  root.addChild(passLabel);
+      const passLabel = new Text({
+        text: "Pass",
+        style: {
+          fontFamily: THEME.typography.fontFamily,
+          fontSize: THEME.typography.heading.minSize,
+          fill: THEME.colors.text.muted,
+        },
+      });
+      passLabel.anchor.set(0.5);
+      passLabel.x = passRect.x + passRect.width / 2;
+      passLabel.y = passRect.y + passRect.height / 2;
+      root.addChild(passLabel);
 
-  // Score panel
-  drawScorePanel(root, z.top.x + z.top.width - 108, z.top.y + THEME.spacing.xs, 0, 0);
+      // Score panel
+      drawScorePanel(root, z.top.x + z.top.width - 108, z.top.y + THEME.spacing.xs, 0, 0);
 
-  return { view: root };
-};
+      return root;
+    }}
+  />
+);
