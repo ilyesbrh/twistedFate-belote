@@ -65,12 +65,12 @@ Rewrite BiddingPanel as a React functional component with 5 buttons (4 suits + p
 
 ## Technical Decisions
 
-| Decision | Choice | Rationale |
-| --- | --- | --- |
-| FancyButton vs manual Graphics | Manual Graphics + pointerdown | Consistency with imperative version; FancyButton adds complexity for minimal gain at this stage |
-| Callback props vs method registration | Props (`onSuitBid`, `onPass`) | React idiomatic pattern; callbacks flow down from parent |
-| computeBiddingLayout reuse | Unchanged pure math | Layout math is framework-agnostic; survives migration per plan preservation rules |
-| Event handling | `onPointerDown` on pixiContainer | Same event as imperative `pointerdown`; touch-compatible |
+| Decision                              | Choice                           | Rationale                                                                                       |
+| ------------------------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------- |
+| FancyButton vs manual Graphics        | Manual Graphics + pointerdown    | Consistency with imperative version; FancyButton adds complexity for minimal gain at this stage |
+| Callback props vs method registration | Props (`onSuitBid`, `onPass`)    | React idiomatic pattern; callbacks flow down from parent                                        |
+| computeBiddingLayout reuse            | Unchanged pure math              | Layout math is framework-agnostic; survives migration per plan preservation rules               |
+| Event handling                        | `onPointerDown` on pixiContainer | Same event as imperative `pointerdown`; touch-compatible                                        |
 
 ## Refactoring Performed
 

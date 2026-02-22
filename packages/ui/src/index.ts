@@ -63,6 +63,14 @@ export type { CardPosition, HandLayoutResult } from "./components/hand/hand-layo
 export { HandDisplay } from "./components/hand/hand-display.js";
 export type { HandCard } from "./components/hand/hand-display.js";
 
+// Hand Display (React)
+export {
+  HandDisplayReact,
+  cardAlpha,
+  cardEventMode,
+} from "./components/hand/hand-display-react.js";
+export type { HandCardReact, HandDisplayReactProps } from "./components/hand/hand-display-react.js";
+
 // Opponent Layout
 export { computeOpponentLayout } from "./components/opponent-hand/opponent-layout.js";
 export type {
