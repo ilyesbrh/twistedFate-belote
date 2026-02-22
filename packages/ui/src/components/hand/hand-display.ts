@@ -16,6 +16,7 @@ import { computeHandLayout } from "./hand-layout.js";
 export interface HandCard {
   readonly suit: Suit;
   readonly rank: Rank;
+  readonly playable: boolean;
 }
 
 // ---- HandDisplay ----------------------------------------------------
@@ -68,6 +69,7 @@ export class HandDisplay extends Container {
       this.addChild(sprite);
     }
 
+    this.applyPlayableState(cards);
     this.applyCardInteraction();
   }
 
@@ -80,6 +82,19 @@ export class HandDisplay extends Container {
   /** Get all current card sprites (for interaction handling). */
   getCardSprites(): readonly CardSprite[] {
     return this.cardSprites;
+  }
+
+  private applyPlayableState(cards: readonly HandCard[]): void {
+    const hasNonPlayable = cards.some((c) => !c.playable);
+    if (!hasNonPlayable) return; // All playable — no dimming needed
+
+    for (const [i, sprite] of this.cardSprites.entries()) {
+      const card = cards[i];
+      if (card && !card.playable) {
+        sprite.alpha = 0.4;
+        sprite.eventMode = "none";
+      }
+    }
   }
 
   private applyCardInteraction(): void {

@@ -6,6 +6,7 @@
 
 import { deepFreeze } from "./deep-freeze.js";
 import type { PlayerPosition, Card, Suit, Trick, RoundPhase } from "@belote/core";
+import { getValidPlays } from "@belote/core";
 import type { Seat } from "./layout.js";
 import type { HandCard } from "./components/hand/hand-display.js";
 import type { OpponentOrientation } from "./components/opponent-hand/opponent-layout.js";
@@ -91,7 +92,7 @@ export function opponentOrientation(seat: Seat): OpponentOrientation {
 // ---- Card mapping ---------------------------------------------------
 
 export function mapHandToView(cards: readonly Card[]): HandCard[] {
-  return cards.map((c) => ({ suit: c.suit, rank: c.rank }));
+  return cards.map((c) => ({ suit: c.suit, rank: c.rank, playable: true }));
 }
 
 export function mapTrickToView(trick: Trick | null): TrickCard[] {
@@ -101,6 +102,22 @@ export function mapTrickToView(trick: Trick | null): TrickCard[] {
     suit: pc.card.suit,
     rank: pc.card.rank,
   }));
+}
+
+// ---- Playable card marking ------------------------------------------
+
+function markPlayableCards(
+  hand: HandCard[],
+  phase: GamePhase,
+  isHumanTurn: boolean,
+  round: RoundSnapshot,
+  humanPlayer: { readonly hand: readonly Card[] },
+): HandCard[] {
+  if (phase !== "playing" || !isHumanTurn || !round.currentTrick) return hand;
+
+  const validPlays = getValidPlays(round.currentTrick, 0 as PlayerPosition, humanPlayer.hand);
+  const validSet = new Set(validPlays.map((c) => `${c.suit}-${c.rank}`));
+  return hand.map((c) => ({ ...c, playable: validSet.has(`${c.suit}-${c.rank}`) }));
 }
 
 // ---- Full state mapping ---------------------------------------------
@@ -149,9 +166,12 @@ export function mapGameStateToView(input: GameStateInput): GameView {
   // Active seat
   const activeSeat = activeTurnPosition !== null ? positionToSeat(activeTurnPosition) : null;
 
-  // Human hand (position 0)
+  // Human hand (position 0) with playable marking
   const humanPlayer = round.players.find((p) => p.position === 0);
-  const hand = humanPlayer ? mapHandToView(humanPlayer.hand) : [];
+  const isHumanTurn = activeTurnPosition === 0;
+  const hand = humanPlayer
+    ? markPlayableCards(mapHandToView(humanPlayer.hand), phase, isHumanTurn, round, humanPlayer)
+    : [];
 
   // Player info for all 4 seats
   const players: PlayerView[] = round.players.map((p) => ({

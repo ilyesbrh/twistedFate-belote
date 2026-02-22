@@ -283,7 +283,7 @@ describe("GameController phase mapping", () => {
 
     const view = renderer.lastView()!;
     expect(view.hand).toHaveLength(1);
-    expect(view.hand[0]).toEqual({ suit: "spades", rank: "ace" });
+    expect(view.hand[0]).toEqual({ suit: "spades", rank: "ace", playable: true });
   });
 
   it("maps opponent card counts", () => {

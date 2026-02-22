@@ -96,12 +96,12 @@ describe("opponentOrientation", () => {
 // ====================================================================
 
 describe("mapHandToView", () => {
-  it("maps cards preserving suit and rank", () => {
+  it("maps cards preserving suit and rank, defaults playable to true", () => {
     const cards: Card[] = [fakeCard("spades", "ace"), fakeCard("hearts", "jack")];
     const result = mapHandToView(cards);
     expect(result).toHaveLength(2);
-    expect(result[0]).toEqual({ suit: "spades", rank: "ace" });
-    expect(result[1]).toEqual({ suit: "hearts", rank: "jack" });
+    expect(result[0]).toEqual({ suit: "spades", rank: "ace", playable: true });
+    expect(result[1]).toEqual({ suit: "hearts", rank: "jack", playable: true });
   });
 
   it("returns empty array for empty hand", () => {
@@ -272,8 +272,8 @@ describe("mapGameStateToView", () => {
     });
 
     expect(view.hand).toHaveLength(2);
-    expect(view.hand[0]).toEqual({ suit: "spades", rank: "ace" });
-    expect(view.hand[1]).toEqual({ suit: "hearts", rank: "7" });
+    expect(view.hand[0]).toEqual({ suit: "spades", rank: "ace", playable: true });
+    expect(view.hand[1]).toEqual({ suit: "hearts", rank: "7", playable: true });
   });
 
   it("maps opponent card counts", () => {
@@ -408,6 +408,180 @@ describe("mapGameStateToView", () => {
       suit: "spades",
       rank: "ace",
     });
+  });
+});
+
+// ====================================================================
+// Playable card marking — highlight valid plays during human's turn
+// ====================================================================
+
+describe("mapGameStateToView playable cards", () => {
+  const spadeAce = fakeCard("spades", "ace");
+  const heart7 = fakeCard("hearts", "7");
+  const club8 = fakeCard("clubs", "8");
+
+  function makePlayingRound(
+    humanHand: Card[],
+    currentTrick: {
+      id: string;
+      leadingPlayerPosition: PlayerPosition;
+      trumpSuit: Suit;
+      cards: { card: Card; playerPosition: PlayerPosition }[];
+      state: "in_progress" | "completed";
+      winnerPosition: PlayerPosition | null;
+    } | null,
+  ) {
+    return {
+      players: [
+        { position: 0 as PlayerPosition, hand: humanHand },
+        { position: 1 as PlayerPosition, hand: [fakeCard("diamonds", "9")] },
+        { position: 2 as PlayerPosition, hand: [fakeCard("spades", "king")] },
+        { position: 3 as PlayerPosition, hand: [fakeCard("hearts", "queen")] },
+      ],
+      contract: { suit: "spades" as Suit },
+      currentTrick,
+      phase: "playing" as const,
+    };
+  }
+
+  it("all cards playable during bidding phase", () => {
+    const round = {
+      players: [
+        { position: 0 as PlayerPosition, hand: [spadeAce, heart7] },
+        { position: 1 as PlayerPosition, hand: [] },
+        { position: 2 as PlayerPosition, hand: [] },
+        { position: 3 as PlayerPosition, hand: [] },
+      ],
+      contract: null,
+      currentTrick: null,
+      phase: "bidding" as const,
+    };
+
+    const view = mapGameStateToView({
+      round,
+      scores: [0, 0],
+      playerNames: ["You", "Ali", "Partner", "Omar"],
+      activeTurnPosition: 0,
+    });
+
+    expect(view.hand.every((c) => c.playable)).toBe(true);
+  });
+
+  it("all cards playable when not human's turn", () => {
+    const trick = {
+      id: "t1",
+      leadingPlayerPosition: 1 as PlayerPosition,
+      trumpSuit: "spades" as Suit,
+      cards: [] as { card: Card; playerPosition: PlayerPosition }[],
+      state: "in_progress" as const,
+      winnerPosition: null,
+    };
+
+    const round = makePlayingRound([spadeAce, heart7], trick);
+
+    const view = mapGameStateToView({
+      round,
+      scores: [0, 0],
+      playerNames: ["You", "Ali", "Partner", "Omar"],
+      activeTurnPosition: 1, // West's turn, not human
+    });
+
+    // Not human's turn → all cards shown normally (all playable)
+    expect(view.hand.every((c) => c.playable)).toBe(true);
+  });
+
+  it("marks only valid plays when human leads a trick", () => {
+    // Human leads: all cards in hand are valid
+    const trick = {
+      id: "t1",
+      leadingPlayerPosition: 0 as PlayerPosition,
+      trumpSuit: "spades" as Suit,
+      cards: [] as { card: Card; playerPosition: PlayerPosition }[],
+      state: "in_progress" as const,
+      winnerPosition: null,
+    };
+
+    const round = makePlayingRound([spadeAce, heart7, club8], trick);
+
+    const view = mapGameStateToView({
+      round,
+      scores: [0, 0],
+      playerNames: ["You", "Ali", "Partner", "Omar"],
+      activeTurnPosition: 0, // Human's turn
+    });
+
+    // When leading, any card is valid
+    expect(view.hand.every((c) => c.playable)).toBe(true);
+  });
+
+  it("marks non-followable cards as not playable", () => {
+    // West led spades. Human has spadeAce + heart7.
+    // Must follow suit (spades) → only spadeAce is playable.
+    const trick = {
+      id: "t1",
+      leadingPlayerPosition: 1 as PlayerPosition,
+      trumpSuit: "spades" as Suit,
+      cards: [{ card: fakeCard("spades", "10"), playerPosition: 1 as PlayerPosition }],
+      state: "in_progress" as const,
+      winnerPosition: null,
+    };
+
+    // Human is position 0, next after position 1 would be position 2...
+    // Actually, let me set up the trick so human is next.
+    // West(1) led → North(2) plays → East(3) plays → South(0) plays
+    // OR: let me just have position 3 lead and human be next.
+    const trick2 = {
+      id: "t1",
+      leadingPlayerPosition: 3 as PlayerPosition,
+      trumpSuit: "hearts" as Suit, // Hearts is trump
+      cards: [{ card: fakeCard("spades", "10"), playerPosition: 3 as PlayerPosition }],
+      state: "in_progress" as const,
+      winnerPosition: null,
+    };
+
+    // Human (position 0) is next after position 3.
+    // East led spades. Human has spadeAce + heart7.
+    // Must follow suit (spades) → only spadeAce is playable.
+    const round = makePlayingRound([spadeAce, heart7], trick2);
+
+    const view = mapGameStateToView({
+      round,
+      scores: [0, 0],
+      playerNames: ["You", "Ali", "Partner", "Omar"],
+      activeTurnPosition: 0,
+    });
+
+    // spadeAce is playable (follows suit), heart7 is not
+    const aceCard = view.hand.find((c) => c.suit === "spades" && c.rank === "ace");
+    const heartCard = view.hand.find((c) => c.suit === "hearts" && c.rank === "7");
+    expect(aceCard?.playable).toBe(true);
+    expect(heartCard?.playable).toBe(false);
+  });
+
+  it("all cards playable when no current trick (null)", () => {
+    const round = makePlayingRound([spadeAce, heart7], null);
+
+    const view = mapGameStateToView({
+      round,
+      scores: [0, 0],
+      playerNames: ["You", "Ali", "Partner", "Omar"],
+      activeTurnPosition: 0,
+    });
+
+    // No trick in progress → all playable
+    expect(view.hand.every((c) => c.playable)).toBe(true);
+  });
+
+  it("all cards playable in idle view (no round)", () => {
+    const view = mapGameStateToView({
+      round: null,
+      scores: [0, 0],
+      playerNames: ["You", "Ali", "Partner", "Omar"],
+      activeTurnPosition: null,
+    });
+
+    // Empty hand, but the pattern holds
+    expect(view.hand).toEqual([]);
   });
 });
 
