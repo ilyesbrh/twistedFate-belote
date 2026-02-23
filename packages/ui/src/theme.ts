@@ -291,7 +291,7 @@ export const THEME: Theme = deepFreeze({
     size: 64,
     borderRadius: 14,
     activeGlowColor: 0xffd54f,
-    activeGlowStrength: 3,
+    activeGlowStrength: 1,
     initialsFontSize: 28,
   },
 

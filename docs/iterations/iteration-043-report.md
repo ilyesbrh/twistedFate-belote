@@ -32,9 +32,11 @@ Create a `useGameController` React hook that replaces the imperative `GameContro
 ### `__tests__/use-game-controller.test.ts` — 14 tests
 
 **Exports (1)**:
+
 - exports all public API functions and constants (6 assertions)
 
 **controllerReducer (8)**:
+
 - initial state has null activeTurn, null dealerPosition, epoch 0
 - round_started sets activeTurn to (dealer+1)%4 and stores dealerPosition
 - bid_placed advances activeTurn to (player+1)%4
@@ -45,11 +47,13 @@ Create a `useGameController` React hook that replaces the imperative `GameContro
 - unknown event increments epoch without changing activeTurn
 
 **buildGameView (3)**:
+
 - returns idle view when session has no round
 - returns playing phase with round data
 - maps team scores from session
 
 **canPlayCard / canBid (2)**:
+
 - canPlayCard returns true only for playing phase
 - canBid returns true only for bidding phase
 
@@ -80,14 +84,14 @@ Create a `useGameController` React hook that replaces the imperative `GameContro
 
 ## Technical Decisions
 
-| Decision | Choice | Rationale |
-| --- | --- | --- |
-| Pure reducer extraction | `controllerReducer` as standalone function | Testable without React rendering; mirrors imperative `trackActiveTurn` |
-| Epoch counter | `epoch` field in ControllerState | Forces re-render on every event, even when turn state unchanged |
-| buildGameView delegation | Wraps `mapGameStateToView` | Single source of truth for view building; already tested in game-view.test.ts |
-| useCallback for dispatch | Stable references for playCard/placeBid/pass | Prevents unnecessary child re-renders in GameRoot component tree |
-| No renderHook testing | Tests focus on pure functions | Avoids `@testing-library/react` dependency; hook integration verified via Storybook |
-| Session reads at dispatch time | `session.currentRound?.phase` checked in callbacks | Phase state is always fresh at dispatch time, not stale from render |
+| Decision                       | Choice                                             | Rationale                                                                           |
+| ------------------------------ | -------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Pure reducer extraction        | `controllerReducer` as standalone function         | Testable without React rendering; mirrors imperative `trackActiveTurn`              |
+| Epoch counter                  | `epoch` field in ControllerState                   | Forces re-render on every event, even when turn state unchanged                     |
+| buildGameView delegation       | Wraps `mapGameStateToView`                         | Single source of truth for view building; already tested in game-view.test.ts       |
+| useCallback for dispatch       | Stable references for playCard/placeBid/pass       | Prevents unnecessary child re-renders in GameRoot component tree                    |
+| No renderHook testing          | Tests focus on pure functions                      | Avoids `@testing-library/react` dependency; hook integration verified via Storybook |
+| Session reads at dispatch time | `session.currentRound?.phase` checked in callbacks | Phase state is always fresh at dispatch time, not stale from render                 |
 
 ## Errors Encountered and Fixed
 

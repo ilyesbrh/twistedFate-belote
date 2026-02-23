@@ -30,6 +30,9 @@ import {
 import type { GameCommand, PlaceBidCommand, PlayCardCommand } from "./commands.js";
 import type { GameEvent, GameEventListener } from "./events.js";
 
+// Timer available in all JS runtimes (browser + Node), not in ES2022 lib.
+declare function setTimeout(fn: () => void, ms: number): unknown;
+
 // ── Session Configuration ──
 
 export type PlayerType = "human" | "ai";
@@ -38,6 +41,8 @@ export interface SessionConfig {
   readonly playerTypes: readonly [PlayerType, PlayerType, PlayerType, PlayerType];
   readonly rng?: () => number;
   readonly idGenerator?: IdGenerator;
+  /** Delay in ms between each game step (bid, card play). 0 = instant (default). */
+  readonly stepDelayMs?: number;
 }
 
 // ── Session State ──
@@ -61,11 +66,13 @@ export class GameSession {
   private readonly _idGenerator: IdGenerator;
   private readonly _rng: () => number;
   private readonly _playerTypes: readonly [PlayerType, PlayerType, PlayerType, PlayerType];
+  private readonly _stepDelayMs: number;
 
   constructor(config: SessionConfig) {
     this._playerTypes = config.playerTypes;
     this._idGenerator = config.idGenerator ?? createIdGenerator();
     this._rng = config.rng ?? Math.random;
+    this._stepDelayMs = config.stepDelayMs ?? 0;
   }
 
   // ── Getters ──
@@ -122,6 +129,18 @@ export class GameSession {
   private _emit(event: GameEvent): void {
     for (const listener of this._listeners) {
       listener(event);
+    }
+  }
+
+  // ── Private: Schedule next game step (instant or delayed) ──
+
+  private _scheduleNext(fn: () => void): void {
+    if (this._stepDelayMs <= 0) {
+      fn();
+    } else {
+      setTimeout(() => {
+        fn();
+      }, this._stepDelayMs);
     }
   }
 
@@ -193,8 +212,10 @@ export class GameSession {
       dealerPosition: this._game.currentDealerPosition,
     });
 
-    // Auto-play AI bids if AI goes first
-    this._processAiBids();
+    // After round_started, schedule first bid step (delayed so UI shows deal)
+    this._scheduleNext(() => {
+      this._processNextBid();
+    });
   }
 
   // ── Private: Place Bid ──
@@ -227,7 +248,10 @@ export class GameSession {
       playerPosition,
     });
 
-    this._afterBidding();
+    // Schedule next step after human bid (delayed so UI shows the bid)
+    this._scheduleNext(() => {
+      this._afterBidding();
+    });
   }
 
   // ── Private: Create Bid from command ──
@@ -267,8 +291,10 @@ export class GameSession {
         contract: this._currentRound.contract,
       });
       this._state = "round_playing";
-      // Auto-play AI cards if AI goes first
-      this._processAiCards();
+      // Schedule first card play (delayed so UI shows bidding→playing transition)
+      this._scheduleNext(() => {
+        this._processNextCard();
+      });
       return;
     }
 
@@ -277,57 +303,66 @@ export class GameSession {
       return;
     }
 
-    // Still bidding — check if next bidder is AI
-    this._processAiBids();
+    // Still bidding — process next bid
+    this._processNextBid();
   }
 
-  // ── Private: Process AI Bids (iterative) ──
+  // ── Private: Process Next Bid (one step) ──
 
-  private _processAiBids(): void {
-    while (this._currentRound?.phase === "bidding") {
-      const currentPos = this._currentRound.biddingRound.currentPlayerPosition;
-      if (this._playerTypes[currentPos] !== "ai") {
-        return;
-      }
+  private _processNextBid(): void {
+    if (this._currentRound?.phase !== "bidding") return;
 
-      const player = this._currentRound.players.find((p) => p.position === currentPos);
-      if (player === undefined) {
-        return;
-      }
+    const currentPos = this._currentRound.biddingRound.currentPlayerPosition;
+    if (this._playerTypes[currentPos] !== "ai") return;
 
-      const bid = chooseBid(
-        player.hand,
-        this._currentRound.biddingRound,
-        currentPos,
-        this._idGenerator,
-      );
+    // Execute one AI bid
+    this._executeAiBid(currentPos);
 
-      this._currentRound = placeBidInRound(this._currentRound, bid, this._idGenerator);
+    // Re-read round after mutation (phase may have changed)
+    const round = this._currentRound as Round | null;
+    if (round === null) return;
 
-      this._emit({
-        type: "bid_placed",
-        bid,
-        playerPosition: currentPos,
+    if (round.phase === "playing" && round.contract !== null) {
+      this._emit({ type: "bidding_completed", contract: round.contract });
+      this._state = "round_playing";
+      this._scheduleNext(() => {
+        this._processNextCard();
       });
-
-      // Check state after AI bid
-      if (this._currentRound.phase === "playing" && this._currentRound.contract !== null) {
-        this._emit({
-          type: "bidding_completed",
-          contract: this._currentRound.contract,
-        });
-        this._state = "round_playing";
-        this._processAiCards();
-        return;
-      }
-
-      if (this._currentRound.phase === "cancelled") {
-        this._finishRound();
-        return;
-      }
-
-      // Still bidding — loop continues to check next bidder
+      return;
     }
+
+    if (round.phase === "cancelled") {
+      this._finishRound();
+      return;
+    }
+
+    // Still bidding — schedule next bid step
+    this._scheduleNext(() => {
+      this._processNextBid();
+    });
+  }
+
+  /** Execute a single AI bid. */
+  private _executeAiBid(currentPos: PlayerPosition): void {
+    if (this._currentRound === null) return;
+
+    const player = this._currentRound.players.find((p) => p.position === currentPos);
+    if (player === undefined) return;
+
+    const bid = chooseBid(
+      player.hand,
+      this._currentRound.biddingRound,
+      currentPos,
+      this._idGenerator,
+    );
+
+    this._currentRound = placeBidInRound(this._currentRound, bid, this._idGenerator);
+
+    this._emit({
+      type: "bid_placed",
+      bid,
+      playerPosition: currentPos,
+    });
   }
 
   // ── Private: Play Card (single card) ──
@@ -388,7 +423,11 @@ export class GameSession {
     }
 
     this._playSingleCard(playerPosition, card);
-    this._afterCardPlay();
+
+    // Schedule next step after human card (delayed so UI shows the card)
+    this._scheduleNext(() => {
+      this._afterCardPlay();
+    });
   }
 
   // ── Private: After Card Play ──
@@ -404,43 +443,56 @@ export class GameSession {
       return;
     }
 
-    // More cards to play — check if next player is AI
-    this._processAiCards();
+    // More cards to play — process next card
+    this._processNextCard();
   }
 
-  // ── Private: Process AI Cards (iterative) ──
+  // ── Private: Process Next Card (one step) ──
 
-  private _processAiCards(): void {
-    for (;;) {
-      if (this._currentRound?.phase !== "playing" || this._currentRound.currentTrick === null) {
-        break;
+  private _processNextCard(): void {
+    const pos = this._nextAiCardPlayer();
+    if (pos === null || this._currentRound === null) {
+      if (this._currentRound?.phase === "completed") {
+        this._finishRound();
       }
-
-      const trick = this._currentRound.currentTrick;
-      let currentPos: PlayerPosition;
-
-      if (trick.cards.length === 0) {
-        currentPos = trick.leadingPlayerPosition;
-      } else {
-        const lastPlayed = trick.cards[trick.cards.length - 1];
-        if (lastPlayed === undefined) {
-          return;
-        }
-        currentPos = getNextPlayerPosition(lastPlayed.playerPosition);
-      }
-
-      if (this._playerTypes[currentPos] !== "ai") {
-        return;
-      }
-
-      const card = chooseCardForRound(this._currentRound, currentPos);
-      this._playSingleCard(currentPos, card);
+      return;
     }
 
-    // Round completed after AI cards — finish it
-    if (this._currentRound?.phase === "completed") {
+    const card = chooseCardForRound(this._currentRound, pos);
+    this._playSingleCard(pos, card);
+
+    // After playing, check if round completed
+    if (this._currentRound.phase === "completed") {
       this._finishRound();
+      return;
     }
+
+    // Schedule next card step
+    this._scheduleNext(() => {
+      this._processNextCard();
+    });
+  }
+
+  /** Return the next AI player position to act, or null if none. */
+  private _nextAiCardPlayer(): PlayerPosition | null {
+    if (this._currentRound?.phase !== "playing" || this._currentRound.currentTrick === null) {
+      return null;
+    }
+
+    const trick = this._currentRound.currentTrick;
+    let currentPos: PlayerPosition;
+
+    if (trick.cards.length === 0) {
+      currentPos = trick.leadingPlayerPosition;
+    } else {
+      const lastPlayed = trick.cards[trick.cards.length - 1];
+      if (lastPlayed === undefined) return null;
+      currentPos = getNextPlayerPosition(lastPlayed.playerPosition);
+    }
+
+    if (this._playerTypes[currentPos] !== "ai") return null;
+
+    return currentPos;
   }
 
   // ── Private: Finish Round ──

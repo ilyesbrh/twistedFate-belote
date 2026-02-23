@@ -24,6 +24,7 @@ function createGameDemo(app: Application): void {
   // 2. Game session: human + 3 AI
   const session = new GameSession({
     playerTypes: ["human", "ai", "ai", "ai"],
+    stepDelayMs: 2000,
   });
 
   // 3. Game renderer (root UI layer)
