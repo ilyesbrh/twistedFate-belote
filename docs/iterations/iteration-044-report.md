@@ -24,6 +24,7 @@ Delete all old imperative component files, stories, harness scenes, GameRenderer
 ## Files Deleted (26)
 
 ### Old Imperative Components (8)
+
 - `src/components/bidding/bidding-panel.ts`
 - `src/components/hand/hand-display.ts`
 - `src/components/hud/score-panel.ts`
@@ -34,6 +35,7 @@ Delete all old imperative component files, stories, harness scenes, GameRenderer
 - `src/components/trick/trick-display.ts`
 
 ### Old Imperative Stories (9)
+
 - `src/components/bidding/bidding-panel.stories.tsx`
 - `src/components/hand/hand-display.stories.tsx`
 - `src/components/hud/score-panel.stories.tsx`
@@ -45,12 +47,14 @@ Delete all old imperative component files, stories, harness scenes, GameRenderer
 - `src/components/trick/trick-display.stories.tsx`
 
 ### Root Files (4)
+
 - `src/game-renderer.ts`
 - `src/game-controller.ts`
 - `src/game-renderer.stories.tsx`
 - `__tests__/game-controller.test.ts`
 
 ### Harness Directory (5)
+
 - `src/harness/game-demo.scene.ts`
 - `src/harness/card-gallery.scene.ts`
 - `src/harness/table-background.scene.ts`
@@ -70,14 +74,14 @@ Delete all old imperative component files, stories, harness scenes, GameRenderer
 
 ## Technical Decisions
 
-| Decision | Choice | Rationale |
-| --- | --- | --- |
-| Keep `storybook-helpers.tsx` | StoryCanvas still used by 3 root stories | `card-sprite`, `card-gallery`, `table-background` have no React equivalents yet |
-| `HandCard`/`TrickCard` in `game-view.ts` | Types defined alongside mapper functions | Avoids circular dependency (game-view shouldn't import from components) |
-| `Rank` instead of `string` | Upgraded `HandCard.rank`/`TrickCard.rank` to `Rank` type | Aligns with React component types (`HandCardReact`, `TrickCardReact`) for type-safe assignment |
-| `GameSessionAccess` in hook file | Interface lives next to its only consumer | Single consumer, no need for separate types file |
-| `teamForSeat` in React file | Collocated with `PlayerInfoReact` | Mirrors the old imperative file's structure |
-| Delete `game-controller.test.ts` | 46 tests removed | Tests the deleted `GameController` class; equivalent logic tested via `use-game-controller.test.ts` (14 tests for pure reducer) |
+| Decision                                 | Choice                                                   | Rationale                                                                                                                       |
+| ---------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Keep `storybook-helpers.tsx`             | StoryCanvas still used by 3 root stories                 | `card-sprite`, `card-gallery`, `table-background` have no React equivalents yet                                                 |
+| `HandCard`/`TrickCard` in `game-view.ts` | Types defined alongside mapper functions                 | Avoids circular dependency (game-view shouldn't import from components)                                                         |
+| `Rank` instead of `string`               | Upgraded `HandCard.rank`/`TrickCard.rank` to `Rank` type | Aligns with React component types (`HandCardReact`, `TrickCardReact`) for type-safe assignment                                  |
+| `GameSessionAccess` in hook file         | Interface lives next to its only consumer                | Single consumer, no need for separate types file                                                                                |
+| `teamForSeat` in React file              | Collocated with `PlayerInfoReact`                        | Mirrors the old imperative file's structure                                                                                     |
+| Delete `game-controller.test.ts`         | 46 tests removed                                         | Tests the deleted `GameController` class; equivalent logic tested via `use-game-controller.test.ts` (14 tests for pure reducer) |
 
 ## Errors Encountered and Fixed
 

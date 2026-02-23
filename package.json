@@ -9,7 +9,6 @@
     "pnpm": ">=10.0.0"
   },
   "scripts": {
-    "dev": "pnpm --filter @belote/ui dev",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -18,9 +17,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --build",
-    "build": "pnpm -r --filter './packages/*' run build",
-    "storybook": "pnpm --filter @belote/ui storybook",
-    "visual-review": "pnpm --filter @belote/ui visual-review"
+    "build": "pnpm -r --filter './packages/*' run build"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",
@@ -34,11 +31,6 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild"
-    ],
-    "peerDependencyRules": {
-      "allowedVersions": {
-        "vite": "7"
-      }
-    }
+    ]
   }
 }
