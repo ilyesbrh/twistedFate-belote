@@ -63,10 +63,6 @@ export { CardSprite, cardLabel, CARD_BACK_LABEL } from "./card-sprite.js";
 export { computeHandLayout } from "./components/hand/hand-layout.js";
 export type { CardPosition, HandLayoutResult } from "./components/hand/hand-layout.js";
 
-// Hand Display
-export { HandDisplay } from "./components/hand/hand-display.js";
-export type { HandCard } from "./components/hand/hand-display.js";
-
 // Hand Display (React)
 export {
   HandDisplayReact,
@@ -83,9 +79,6 @@ export type {
   OpponentLayoutResult,
 } from "./components/opponent-hand/opponent-layout.js";
 
-// Opponent Hand Display
-export { OpponentHand } from "./components/opponent-hand/opponent-hand.js";
-
 // Opponent Hand Display (React)
 export { OpponentHandReact } from "./components/opponent-hand/opponent-hand-react.js";
 export type { OpponentHandReactProps } from "./components/opponent-hand/opponent-hand-react.js";
@@ -98,10 +91,6 @@ export type {
   TrickLayoutResult,
 } from "./components/trick/trick-layout.js";
 
-// Trick Display
-export { TrickDisplay } from "./components/trick/trick-display.js";
-export type { TrickCard } from "./components/trick/trick-display.js";
-
 // Trick Display (React)
 export { TrickDisplayReact } from "./components/trick/trick-display-react.js";
 export type {
@@ -109,21 +98,17 @@ export type {
   TrickDisplayReactProps,
 } from "./components/trick/trick-display-react.js";
 
-// Player Info
-export { PlayerInfo, teamForSeat } from "./components/player-info/player-info.js";
-export type { PlayerSeat, PlayerInfoOptions } from "./components/player-info/player-info.js";
-
 // Player Info (React)
 export {
   PlayerInfoReact,
   drawPlayerAvatar,
   playerInitial,
+  teamForSeat,
 } from "./components/player-info/player-info-react.js";
-export type { PlayerInfoReactProps } from "./components/player-info/player-info-react.js";
-
-// HUD — Score Panel
-export { ScorePanel } from "./components/hud/score-panel.js";
-export type { ScorePanelOptions } from "./components/hud/score-panel.js";
+export type {
+  PlayerInfoReactProps,
+  PlayerSeat,
+} from "./components/player-info/player-info-react.js";
 
 // HUD — Score Panel (React)
 export {
@@ -134,9 +119,6 @@ export {
 } from "./components/hud/score-panel-react.js";
 export type { ScorePanelReactProps } from "./components/hud/score-panel-react.js";
 
-// HUD — Trump Indicator
-export { TrumpIndicator } from "./components/hud/trump-indicator.js";
-
 // HUD — Trump Indicator (React)
 export {
   TrumpIndicatorReact,
@@ -144,10 +126,6 @@ export {
   trumpTextConfig,
 } from "./components/hud/trump-indicator-react.js";
 export type { TrumpIndicatorProps } from "./components/hud/trump-indicator-react.js";
-
-// HUD — Turn Indicator
-export { TurnIndicator } from "./components/hud/turn-indicator.js";
-export type { TurnSeat } from "./components/hud/turn-indicator.js";
 
 // HUD — Turn Indicator (React)
 export {
@@ -161,9 +139,6 @@ export type { TurnIndicatorProps } from "./components/hud/turn-indicator-react.j
 // Bidding Layout
 export { computeBiddingLayout } from "./components/bidding/bidding-layout.js";
 export type { ButtonRect, BiddingLayoutResult } from "./components/bidding/bidding-layout.js";
-
-// Bidding Panel
-export { BiddingPanel } from "./components/bidding/bidding-panel.js";
 
 // Bidding Panel (React)
 export {
@@ -183,10 +158,6 @@ export {
 } from "./components/bidding/bidding-dialog-react.js";
 export type { BiddingDialogReactProps } from "./components/bidding/bidding-dialog-react.js";
 
-// Table Layout (root)
-export { TableLayout } from "./components/table/table-layout.js";
-export type { TableLayoutZoneContainers } from "./components/table/table-layout.js";
-
 // Table Layout (React — @pixi/layout flexbox)
 export {
   TableLayoutReact,
@@ -205,6 +176,8 @@ export {
   mapGameStateToView,
 } from "./game-view.js";
 export type {
+  HandCard,
+  TrickCard,
   PlayerView,
   OpponentView,
   GamePhase,
@@ -216,14 +189,6 @@ export type {
 // Game Root (React integration)
 export { GameRoot, teamColor, playerInfoPosition } from "./game-root.js";
 export type { GameRootProps } from "./game-root.js";
-
-// Game Renderer (integration)
-export { GameRenderer } from "./game-renderer.js";
-export type { GameRendererConfig } from "./game-renderer.js";
-
-// Game Controller (event-driven bridge)
-export { GameController } from "./game-controller.js";
-export type { GameSessionAccess, RenderTarget, InputSource } from "./game-controller.js";
 
 // Bootstrap
 export { createApp } from "./bootstrap.js";
@@ -244,10 +209,11 @@ export {
 } from "./hooks/use-game-controller.js";
 export type {
   ControllerState,
+  GameSessionAccess,
   UseGameControllerOptions,
   UseGameControllerResult,
 } from "./hooks/use-game-controller.js";
 
-// Storybook helpers (React bridge for imperative components)
+// Storybook helpers (React bridge for imperative visuals)
 export { StoryCanvas } from "./storybook-helpers.js";
 export type { StoryCanvasProps } from "./storybook-helpers.js";

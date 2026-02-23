@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import type { PlayerPosition, Suit, RoundPhase } from "@belote/core";
 import type { GameEvent } from "@belote/app";
 import type { RoundSnapshot } from "../src/game-view.js";
-import type { GameSessionAccess } from "../src/game-controller.js";
+import type { GameSessionAccess } from "../src/hooks/use-game-controller.js";
 
 /**
  * useGameController — React hook wrapping session subscription in

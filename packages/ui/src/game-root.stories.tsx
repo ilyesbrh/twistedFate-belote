@@ -4,6 +4,7 @@ import { THEME } from "./theme.js";
 import { initPixiReact } from "./pixi-react-setup.js";
 import { GameRoot } from "./game-root.js";
 import type { GameView } from "./game-view.js";
+import React from "react";
 
 initPixiReact();
 
@@ -97,28 +98,80 @@ const BIDDING_VIEW: GameView = {
 
 /** Idle state — no round in progress. */
 export const Idle: StoryFn = () => (
-  <Application width={844} height={390} background={THEME.colors.table.bgDark} antialias>
+  <Application
+    width={844}
+    height={390}
+    background={THEME.colors.table.bgDark}
+    antialias
+    resolution={window.devicePixelRatio || 1}
+  >
     <GameRoot width={844} height={390} view={IDLE_VIEW} />
   </Application>
 );
 
 /** Playing phase — cards in hand, trick in progress, trump and turn indicators visible. */
 export const Playing: StoryFn = () => (
-  <Application width={844} height={390} background={THEME.colors.table.bgDark} antialias>
+  <Application
+    width={844}
+    height={390}
+    background={THEME.colors.table.bgDark}
+    antialias
+    resolution={window.devicePixelRatio || 1}
+  >
     <GameRoot width={844} height={390} view={PLAYING_VIEW} />
   </Application>
 );
 
 /** Bidding phase — bidding panel visible in bottom zone. */
 export const Bidding: StoryFn = () => (
-  <Application width={844} height={390} background={THEME.colors.table.bgDark} antialias>
+  <Application
+    width={844}
+    height={390}
+    background={THEME.colors.table.bgDark}
+    antialias
+    resolution={window.devicePixelRatio || 1}
+  >
     <GameRoot width={844} height={390} view={BIDDING_VIEW} />
   </Application>
 );
 
 /** Portrait layout (390x844). */
 export const Portrait: StoryFn = () => (
-  <Application width={390} height={844} background={THEME.colors.table.bgDark} antialias>
+  <Application
+    width={390}
+    height={844}
+    background={THEME.colors.table.bgDark}
+    antialias
+    resolution={window.devicePixelRatio || 1}
+  >
     <GameRoot width={390} height={844} view={PLAYING_VIEW} />
   </Application>
 );
+
+/** Full window — fits to current window size with high resolution. */
+export const FullWindow: StoryFn = () => {
+  const [dimensions, setDimensions] = React.useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      setDimensions({ width: window.innerWidth, height: window.innerHeight });
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return (
+    <Application
+      width={dimensions.width}
+      height={dimensions.height}
+      background={THEME.colors.table.bgDark}
+      antialias
+      resolution={window.devicePixelRatio || 1}
+    >
+      <GameRoot width={dimensions.width} height={dimensions.height} view={PLAYING_VIEW} />
+    </Application>
+  );
+};

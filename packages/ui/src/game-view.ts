@@ -5,12 +5,24 @@
 // ====================================================================
 
 import { deepFreeze } from "./deep-freeze.js";
-import type { PlayerPosition, Card, Suit, Trick, RoundPhase } from "@belote/core";
+import type { PlayerPosition, Card, Rank, Suit, Trick, RoundPhase } from "@belote/core";
 import { getValidPlays } from "@belote/core";
 import type { Seat } from "./layout.js";
-import type { HandCard } from "./components/hand/hand-display.js";
 import type { OpponentOrientation } from "./components/opponent-hand/opponent-layout.js";
-import type { TrickCard } from "./components/trick/trick-display.js";
+
+/** A card in the human player's hand with playability state. */
+export interface HandCard {
+  readonly suit: Suit;
+  readonly rank: Rank;
+  readonly playable: boolean;
+}
+
+/** A card played to the current trick, tagged with table position. */
+export interface TrickCard {
+  readonly position: Seat;
+  readonly suit: Suit;
+  readonly rank: Rank;
+}
 
 // ---- Types ----------------------------------------------------------
 

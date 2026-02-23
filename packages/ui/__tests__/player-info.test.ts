@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { teamForSeat, type PlayerSeat } from "../src/components/player-info/player-info.js";
+import { teamForSeat, type PlayerSeat } from "../src/components/player-info/player-info-react.js";
 
 // ====================================================================
 // PlayerInfo — unit tests for pure helper functions.

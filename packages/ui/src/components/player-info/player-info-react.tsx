@@ -8,6 +8,17 @@ import type { Graphics } from "pixi.js";
 import type { Seat } from "../../layout.js";
 import { THEME } from "../../theme.js";
 
+// ---- Types ----------------------------------------------------------
+
+export type PlayerSeat = Seat;
+
+// ---- Pure helpers (unit-tested) -------------------------------------
+
+/** Returns team key based on seat: south/north = team1, west/east = team2. */
+export function teamForSeat(seat: PlayerSeat): "team1" | "team2" {
+  return seat === "south" || seat === "north" ? "team1" : "team2";
+}
+
 // ---- Props ----------------------------------------------------------
 
 export interface PlayerInfoReactProps {

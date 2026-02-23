@@ -7,12 +7,19 @@
 
 import { useReducer, useEffect, useCallback } from "react";
 import type { PlayerPosition, Suit, RoundPhase } from "@belote/core";
-import type { GameEvent } from "@belote/app";
-import type { GameView } from "../game-view.js";
+import type { GameCommand, GameEvent, GameEventListener } from "@belote/app";
+import type { GameView, RoundSnapshot } from "../game-view.js";
 import { mapGameStateToView } from "../game-view.js";
-import type { GameSessionAccess } from "../game-controller.js";
 
 // ---- Types --------------------------------------------------------------
+
+/** Minimal session surface needed by the controller (decoupled from concrete GameSession). */
+export interface GameSessionAccess {
+  on(listener: GameEventListener): () => void;
+  dispatch(command: GameCommand): void;
+  readonly currentRound: RoundSnapshot | null;
+  readonly game: { readonly teamScores: readonly [number, number] } | null;
+}
 
 export interface ControllerState {
   readonly activeTurn: PlayerPosition | null;

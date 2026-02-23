@@ -10,7 +10,7 @@ import type { Suit } from "@belote/core";
 import type { Rect, Seat } from "./layout.js";
 import { computeLayout } from "./layout.js";
 import { THEME } from "./theme.js";
-import { teamForSeat } from "./components/player-info/player-info.js";
+import { teamForSeat } from "./components/player-info/player-info-react.js";
 import type { GameView } from "./game-view.js";
 import { TableLayoutReact } from "./components/table/table-layout-react.js";
 import { HandDisplayReact } from "./components/hand/hand-display-react.js";
