@@ -64,7 +64,9 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background 0.1s ease, color 0.1s ease;
+  transition:
+    background 0.1s ease,
+    color 0.1s ease;
 }
 
 .closeBtn:hover {
@@ -84,6 +86,52 @@
   font-size: 13px;
   text-align: center;
   margin-top: 40px;
+}
+
+/* ── Message items ── */
+.messageItem {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 6px 0;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  animation: fadeIn 0.15s ease;
+}
+
+.messageName {
+  font-weight: 700;
+  color: rgba(130, 170, 255, 0.9);
+  flex-shrink: 0;
+}
+
+.messageText {
+  color: var(--text-light);
+}
+
+/* Message type accent colors */
+.messageItem.bid .messageText {
+  color: #e2e8f0;
+}
+.messageItem.trick_win .messageText {
+  color: #4ade80;
+}
+.messageItem.contract .messageText {
+  color: #fbbf24;
+}
+.messageItem.round_cancelled .messageText {
+  color: #f87171;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ── Input row ── */
@@ -132,5 +180,9 @@
   transition: opacity 0.1s ease;
 }
 
-.sendBtn:hover { opacity: 0.85; }
-.sendBtn:active { opacity: 0.7; }
+.sendBtn:hover {
+  opacity: 0.85;
+}
+.sendBtn:active {
+  opacity: 0.7;
+}

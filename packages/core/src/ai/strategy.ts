@@ -361,7 +361,11 @@ export function chooseBid(
   }
 
   // Can't bid if no valid value or hand too weak for the required bid level
-  if (bestSuit === null || minBidValue === null || bestStrength < minBidValue * BID_STRENGTH_RATIO) {
+  if (
+    bestSuit === null ||
+    minBidValue === null ||
+    bestStrength < minBidValue * BID_STRENGTH_RATIO
+  ) {
     return createPassBid(playerPosition, idGenerator);
   }
 

@@ -1,5 +1,5 @@
-export type Suit = 'hearts' | 'diamonds' | 'clubs' | 'spades';
-export type Position = 'south' | 'north' | 'west' | 'east';
+export type Suit = "hearts" | "diamonds" | "clubs" | "spades";
+export type Position = "south" | "north" | "west" | "east";
 
 export interface CardData {
   suit: Suit;
@@ -44,64 +44,64 @@ export const mockGame: MockGameState = {
   themScore: 0,
   usTotalScore: 23,
   themTotalScore: 0,
-  trumpSuit: 'clubs',
-  dealerName: 'ElenaP',
-  activePosition: 'south',
+  trumpSuit: "clubs",
+  dealerName: "ElenaP",
+  activePosition: "south",
 
   players: [
     {
-      name: 'ElenaP',
+      name: "ElenaP",
       level: 14,
-      avatarUrl: 'https://i.pravatar.cc/150?u=elenap-belote',
+      avatarUrl: "https://i.pravatar.cc/150?u=elenap-belote",
       isVip: true,
       isDealer: true,
-      position: 'south',
+      position: "south",
       cardCount: 6,
     },
     {
-      name: 'DilyanaBl',
+      name: "DilyanaBl",
       level: 18,
-      avatarUrl: 'https://i.pravatar.cc/150?u=dilyanab-belote',
+      avatarUrl: "https://i.pravatar.cc/150?u=dilyanab-belote",
       isVip: false,
       isDealer: false,
-      position: 'north',
+      position: "north",
       cardCount: 8,
     },
     {
-      name: 'Villy',
+      name: "Villy",
       level: 17,
-      avatarUrl: 'https://i.pravatar.cc/150?u=villy-belote',
+      avatarUrl: "https://i.pravatar.cc/150?u=villy-belote",
       isVip: true,
       isDealer: false,
-      position: 'west',
+      position: "west",
       cardCount: 8,
     },
     {
-      name: 'Vane_Bane',
+      name: "Vane_Bane",
       level: 10,
-      avatarUrl: 'https://i.pravatar.cc/150?u=vanebane-belote',
+      avatarUrl: "https://i.pravatar.cc/150?u=vanebane-belote",
       isVip: true,
       isDealer: false,
-      position: 'east',
+      position: "east",
       cardCount: 8,
     },
   ],
 
   playerHand: [
-    { suit: 'hearts', rank: '7' },
-    { suit: 'spades', rank: 'jack' },
-    { suit: 'hearts', rank: 'queen', isSelected: true },
-    { suit: 'clubs', rank: 'jack' },
-    { suit: 'clubs', rank: '9' },
-    { suit: 'clubs', rank: 'king' },
-    { suit: 'diamonds', rank: 'king' },
-    { suit: 'clubs', rank: 'queen' },
+    { suit: "hearts", rank: "7" },
+    { suit: "spades", rank: "jack" },
+    { suit: "hearts", rank: "queen", isSelected: true },
+    { suit: "clubs", rank: "jack" },
+    { suit: "clubs", rank: "9" },
+    { suit: "clubs", rank: "king" },
+    { suit: "diamonds", rank: "king" },
+    { suit: "clubs", rank: "queen" },
   ],
 
   trickCards: [
-    { suit: 'hearts', rank: '10', position: 'north', rotation: 22, offsetX: -55, offsetY: -55 },
-    { suit: 'hearts', rank: '8', position: 'west', rotation: -8, offsetX: -80, offsetY: -10 },
-    { suit: 'hearts', rank: '7', position: 'north', rotation: 35, offsetX: -25, offsetY: -35 },
-    { suit: 'hearts', rank: 'king', position: 'east', rotation: -14, offsetX: 90, offsetY: -20 },
+    { suit: "hearts", rank: "10", position: "north", rotation: 22, offsetX: -55, offsetY: -55 },
+    { suit: "hearts", rank: "8", position: "west", rotation: -8, offsetX: -80, offsetY: -10 },
+    { suit: "hearts", rank: "7", position: "north", rotation: 35, offsetX: -25, offsetY: -35 },
+    { suit: "hearts", rank: "king", position: "east", rotation: -14, offsetX: 90, offsetY: -20 },
   ],
 };

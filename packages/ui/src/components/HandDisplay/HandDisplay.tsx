@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import type { CSSProperties } from 'react';
-import type { CardData } from '../../data/mockGame.js';
-import { CardFace } from '../CardFace/CardFace.js';
-import styles from './HandDisplay.module.css';
+import { useEffect, useState } from "react";
+import type { CSSProperties } from "react";
+import type { CardData } from "../../data/mockGame.js";
+import { CardFace } from "../CardFace/CardFace.js";
+import styles from "./HandDisplay.module.css";
 
 interface HandDisplayProps {
   cards: CardData[];
@@ -14,7 +14,12 @@ interface HandDisplayProps {
   isDealing?: boolean;
 }
 
-export function HandDisplay({ cards, legalCardIndices, onPlayCard, isDealing = false }: HandDisplayProps) {
+export function HandDisplay({
+  cards,
+  legalCardIndices,
+  onPlayCard,
+  isDealing = false,
+}: HandDisplayProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   // 'dealt' class triggers the CSS transition animation
   const [dealt, setDealt] = useState(!isDealing);
@@ -29,8 +34,12 @@ export function HandDisplay({ cards, legalCardIndices, onPlayCard, isDealing = f
     if (isDealing) {
       setDealt(false);
       setDealDone(false);
-      const id = requestAnimationFrame(() => { setDealt(true); });
-      return () => { cancelAnimationFrame(id); };
+      const id = requestAnimationFrame(() => {
+        setDealt(true);
+      });
+      return () => {
+        cancelAnimationFrame(id);
+      };
     }
     return undefined;
   }, [isDealing]);
@@ -39,8 +48,12 @@ export function HandDisplay({ cards, legalCardIndices, onPlayCard, isDealing = f
   useEffect(() => {
     if (dealt && !dealDone) {
       const duration = 450 + Math.max(0, n - 1) * 80 + 50; // animation + stagger + buffer
-      const id = setTimeout(() => { setDealDone(true); }, duration);
-      return () => { clearTimeout(id); };
+      const id = setTimeout(() => {
+        setDealDone(true);
+      }, duration);
+      return () => {
+        clearTimeout(id);
+      };
     }
     return undefined;
   }, [dealt, dealDone, n]);
@@ -60,34 +73,30 @@ export function HandDisplay({ cards, legalCardIndices, onPlayCard, isDealing = f
 
   return (
     <div
-      className={`${styles.container} ${dealt ? styles.dealt : ''} ${dealDone ? styles.dealDone : ''}`}
+      className={`${styles.container} ${dealt ? styles.dealt : ""} ${dealDone ? styles.dealDone : ""}`}
       data-testid="hand-display"
     >
       {cards.map((card, i) => {
         const angle = n > 1 ? -maxAngle + (i / (n - 1)) * maxAngle * 2 : 0;
         const isSelected = selectedIndex === i;
-        const isIllegal  = hasRestriction && !legalCardIndices!.has(i);
+        const isIllegal = hasRestriction && !legalCardIndices!.has(i);
 
         const slotStyle: CSSProperties = {
           transform: `translateX(-50%) rotate(${angle}deg)`,
           zIndex: i,
-          '--card-i': String(i), // used by CSS for stagger delay
+          "--card-i": String(i), // used by CSS for stagger delay
         } as CSSProperties;
 
         return (
           <div
             key={`${card.rank}-${card.suit}`}
-            className={`${styles.fanSlot} ${isSelected ? styles.selected : ''} ${isIllegal ? styles.illegal : ''}`}
+            className={`${styles.fanSlot} ${isSelected ? styles.selected : ""} ${isIllegal ? styles.illegal : ""}`}
             style={slotStyle}
             onClick={() => handleClick(i)}
             data-testid={`hand-card-${i}`}
           >
             <div className={styles.cardHover}>
-              <CardFace
-                suit={card.suit}
-                rank={card.rank}
-                isSelected={isSelected}
-              />
+              <CardFace suit={card.suit} rank={card.rank} isSelected={isSelected} />
             </div>
           </div>
         );

@@ -5,7 +5,7 @@
   gap: 8px;
   padding: 7px 14px;
   border-radius: 0 0 14px 0;
-  background: rgba(8, 16, 32, 0.90);
+  background: rgba(8, 16, 32, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-top: none;
   border-left: none;
@@ -32,8 +32,12 @@
   filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
 }
 
-.trumpRed   { color: #e53935; }
-.trumpBlack { color: #ffffff; }
+.trumpRed {
+  color: #e53935;
+}
+.trumpBlack {
+  color: #ffffff;
+}
 
 /* ── Team block: label + round score + total ── */
 .team {

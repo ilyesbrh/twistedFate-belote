@@ -30,8 +30,20 @@
 }
 
 @keyframes timerDrain {
-  0%   { stroke-dashoffset: 0;                     stroke: #4ade80; }
-  60%  { stroke-dashoffset: calc(var(--circ) * 0.6); stroke: #facc15; }
-  85%  { stroke-dashoffset: calc(var(--circ) * 0.85); stroke: #f97316; }
-  100% { stroke-dashoffset: var(--circ);            stroke: #ef4444; }
+  0% {
+    stroke-dashoffset: 0;
+    stroke: #4ade80;
+  }
+  60% {
+    stroke-dashoffset: calc(var(--circ) * 0.6);
+    stroke: #facc15;
+  }
+  85% {
+    stroke-dashoffset: calc(var(--circ) * 0.85);
+    stroke: #f97316;
+  }
+  100% {
+    stroke-dashoffset: var(--circ);
+    stroke: #ef4444;
+  }
 }

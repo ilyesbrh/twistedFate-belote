@@ -7,9 +7,14 @@
   /* background set via inline style in GameTable.tsx to respect Vite base path */
 }
 
-
 /* All background layers now inside the SVG — these divs are unused */
-.felt, .feltWeave, .feltCenter, .rings, .woodRim { display: none; }
+.felt,
+.feltWeave,
+.feltCenter,
+.rings,
+.woodRim {
+  display: none;
+}
 
 /* ═══════════════════════════════════════
    Element positions — Desktop default
@@ -17,13 +22,15 @@
 
 .scorePanel {
   position: absolute;
-  top: 0; left: 0;
+  top: 0;
+  left: 0;
   z-index: 20;
 }
 
 .northHand {
   position: absolute;
-  top: 4px; left: 50%;
+  top: 4px;
+  left: 50%;
   transform: translateX(-50%);
   z-index: 5;
 }
@@ -31,7 +38,8 @@
 /* North avatar overlays the north hand (centered horizontally) */
 .northAvatar {
   position: absolute;
-  top: 24px; left: 50%;
+  top: 24px;
+  left: 50%;
   transform: translateX(-50%);
   z-index: 10;
 }
@@ -39,14 +47,16 @@
 /* West avatar overlays the west card strip */
 .westAvatar {
   position: absolute;
-  left: 4px; top: 54%;
+  left: 4px;
+  top: 54%;
   transform: translateY(-50%);
   z-index: 12;
 }
 
 .westCards {
   position: absolute;
-  left: 4px; top: 54%;
+  left: 4px;
+  top: 54%;
   transform: translateY(-50%);
   z-index: 8;
 }
@@ -54,21 +64,24 @@
 /* East avatar overlays the east card strip */
 .eastAvatar {
   position: absolute;
-  right: 4px; top: 54%;
+  right: 4px;
+  top: 54%;
   transform: translateY(-50%);
   z-index: 12;
 }
 
 .eastCards {
   position: absolute;
-  right: 4px; top: 54%;
+  right: 4px;
+  top: 54%;
   transform: translateY(-50%);
   z-index: 8;
 }
 
 .trickArea {
   position: absolute;
-  top: 50%; left: 50%;
+  top: 50%;
+  left: 50%;
   transform: translate(-50%, -52%);
   z-index: 8;
 }
@@ -76,7 +89,9 @@
 /* ── South row: avatar + hand in one flex bar ── */
 .southRow {
   position: absolute;
-  bottom: 0; left: 0; right: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
   align-items: flex-end;
   pointer-events: none;
@@ -111,7 +126,8 @@
 /* ── Bid panel: centered in the screen ── */
 .bidPanel {
   position: absolute;
-  top: 50%; left: 50%;
+  top: 50%;
+  left: 50%;
   transform: translate(-50%, -50%);
   z-index: 20;
 }
@@ -120,9 +136,15 @@
    Tablet (≤ 900px)
    ═══════════════════════════════════════ */
 @media (max-width: 900px) {
-  .northAvatar { top: 16px; }
-  .westAvatar  { left: 6px; }
-  .eastAvatar  { right: 6px; }
+  .northAvatar {
+    top: 16px;
+  }
+  .westAvatar {
+    left: 6px;
+  }
+  .eastAvatar {
+    right: 6px;
+  }
 }
 
 /* ═══════════════════════════════════════
@@ -130,35 +152,81 @@
    ═══════════════════════════════════════ */
 @media (max-height: 500px) and (orientation: landscape) {
   /* North avatar centered over north hand */
-  .northAvatar { top: 8px; left: 50%; transform: translateX(-50%); }
+  .northAvatar {
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
 
   /* West avatar and cards share the same anchor */
-  .westAvatar  { left: 2px; top: 46%; transform: translateY(-50%); }
-  .westCards   { left: 2px; top: 46%; transform: translateY(-50%); }
+  .westAvatar {
+    left: 2px;
+    top: 46%;
+    transform: translateY(-50%);
+  }
+  .westCards {
+    left: 2px;
+    top: 46%;
+    transform: translateY(-50%);
+  }
 
   /* East avatar and cards share the same anchor */
-  .eastAvatar  { right: 2px; top: 46%; transform: translateY(-50%); }
-  .eastCards   { right: 2px; top: 46%; transform: translateY(-50%); }
+  .eastAvatar {
+    right: 2px;
+    top: 46%;
+    transform: translateY(-50%);
+  }
+  .eastCards {
+    right: 2px;
+    top: 46%;
+    transform: translateY(-50%);
+  }
 
-  .trickArea   { top: 46%; }
-  .bidPanel    { bottom: 70px; }
+  .trickArea {
+    top: 46%;
+  }
+  .bidPanel {
+    bottom: 70px;
+  }
 
-  .southAvatar { padding-bottom: 6px; }
+  .southAvatar {
+    padding-bottom: 6px;
+  }
 }
 
 /* ═══════════════════════════════════════
    Mobile (≤ 600px)
    ═══════════════════════════════════════ */
 @media (max-width: 600px) {
-  .northAvatar { top: 10px; }
+  .northAvatar {
+    top: 10px;
+  }
 
-  .westAvatar  { left: 3px; top: 50%; transform: translateY(-50%); }
-  .westCards   { left: 2px; top: 50%; }
+  .westAvatar {
+    left: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .westCards {
+    left: 2px;
+    top: 50%;
+  }
 
-  .eastAvatar  { right: 3px; top: 50%; transform: translateY(-50%); }
-  .eastCards   { right: 2px; top: 50%; }
+  .eastAvatar {
+    right: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .eastCards {
+    right: 2px;
+    top: 50%;
+  }
 
-  .southAvatar { padding-bottom: 6px; }
+  .southAvatar {
+    padding-bottom: 6px;
+  }
 
-  .trickArea   { top: 48%; }
+  .trickArea {
+    top: 48%;
+  }
 }

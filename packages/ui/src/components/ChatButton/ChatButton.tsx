@@ -1,4 +1,4 @@
-import styles from './ChatButton.module.css';
+import styles from "./ChatButton.module.css";
 
 interface ChatButtonProps {
   onClick: () => void;
@@ -22,7 +22,7 @@ export function ChatButton({ onClick, unreadCount = 0 }: ChatButtonProps) {
 
       {unreadCount > 0 && (
         <span className={styles.badge} aria-label={`${unreadCount} unread`}>
-          {unreadCount > 9 ? '9+' : unreadCount}
+          {unreadCount > 9 ? "9+" : unreadCount}
         </span>
       )}
     </button>

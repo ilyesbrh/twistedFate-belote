@@ -1,7 +1,9 @@
 /* ─────────────────────────────────────────
    Deal animation wrapper
    ───────────────────────────────────────── */
-.cardWrap { will-change: opacity, transform; }
+.cardWrap {
+  will-change: opacity, transform;
+}
 
 /* Pre-deal: hidden */
 .topFan:not(.dealt) .cardWrap,
@@ -22,8 +24,8 @@
   opacity: 1;
   transform: none;
   transition:
-    opacity   0.3s ease                             calc(var(--card-i, 0) * 70ms),
-    transform 0.4s cubic-bezier(0.2, 0, 0, 1)      calc(var(--card-i, 0) * 70ms);
+    opacity 0.3s ease calc(var(--card-i, 0) * 70ms),
+    transform 0.4s cubic-bezier(0.2, 0, 0, 1) calc(var(--card-i, 0) * 70ms);
 }
 
 /* ─────────────────────────────────────────
@@ -37,7 +39,8 @@
 
 .topFanSlot {
   position: absolute;
-  top: 0; left: 50%;
+  top: 0;
+  left: 50%;
   transform-origin: 50% -300px;
 }
 
@@ -55,25 +58,31 @@
    ───────────────────────────────────────── */
 .sideWrap {
   position: relative;
-  width: 90px;   /* = topFan height */
+  width: 90px; /* = topFan height */
   height: 380px; /* = topFan width  */
 }
 
 .sideFan {
   position: absolute;
-  width: 380px;  /* = topFan width  */
-  height: 90px;  /* = topFan height */
+  width: 380px; /* = topFan width  */
+  height: 90px; /* = topFan height */
   /* center the pre-rotation box inside the wrapper */
-  top:  50%; left: 50%;
+  top: 50%;
+  left: 50%;
   transform-origin: center center;
 }
 
-.sideFanLeft  { transform: translate(-50%, -50%) rotate(-90deg); }
-.sideFanRight { transform: translate(-50%, -50%) rotate(90deg);  }
+.sideFanLeft {
+  transform: translate(-50%, -50%) rotate(-90deg);
+}
+.sideFanRight {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
 
 .sideFanSlot {
   position: absolute;
-  top: 0; left: 50%;
+  top: 0;
+  left: 50%;
   transform-origin: 50% -300px; /* same arc as topFanSlot */
 }
 
@@ -81,34 +90,73 @@
    Tablet (≤ 900px)
    ───────────────────────────────────────── */
 @media (max-width: 900px) {
-  .topFan     { width: 280px; height: 70px; }
-  .topFanSlot { transform-origin: 50% -220px; }
+  .topFan {
+    width: 280px;
+    height: 70px;
+  }
+  .topFanSlot {
+    transform-origin: 50% -220px;
+  }
 
-  .sideWrap   { width: 70px; height: 280px; }
-  .sideFan    { width: 280px; height: 70px; }
-  .sideFanSlot { transform-origin: 50% -220px; }
+  .sideWrap {
+    width: 70px;
+    height: 280px;
+  }
+  .sideFan {
+    width: 280px;
+    height: 70px;
+  }
+  .sideFanSlot {
+    transform-origin: 50% -220px;
+  }
 }
 
 /* ─────────────────────────────────────────
    Landscape phone (height ≤ 500px)
    ───────────────────────────────────────── */
 @media (max-height: 500px) and (orientation: landscape) {
-  .topFan     { width: 220px; height: 54px; }
-  .topFanSlot { transform-origin: 50% -170px; }
+  .topFan {
+    width: 220px;
+    height: 54px;
+  }
+  .topFanSlot {
+    transform-origin: 50% -170px;
+  }
 
-  .sideWrap   { width: 54px; height: 220px; }
-  .sideFan    { width: 220px; height: 54px; }
-  .sideFanSlot { transform-origin: 50% -170px; }
+  .sideWrap {
+    width: 54px;
+    height: 220px;
+  }
+  .sideFan {
+    width: 220px;
+    height: 54px;
+  }
+  .sideFanSlot {
+    transform-origin: 50% -170px;
+  }
 }
 
 /* ─────────────────────────────────────────
    Mobile (≤ 600px)
    ───────────────────────────────────────── */
 @media (max-width: 600px) {
-  .topFan     { width: 200px; height: 52px; }
-  .topFanSlot { transform-origin: 50% -160px; }
+  .topFan {
+    width: 200px;
+    height: 52px;
+  }
+  .topFanSlot {
+    transform-origin: 50% -160px;
+  }
 
-  .sideWrap   { width: 52px; height: 200px; }
-  .sideFan    { width: 200px; height: 52px; }
-  .sideFanSlot { transform-origin: 50% -160px; }
+  .sideWrap {
+    width: 52px;
+    height: 200px;
+  }
+  .sideFan {
+    width: 200px;
+    height: 52px;
+  }
+  .sideFanSlot {
+    transform-origin: 50% -160px;
+  }
 }

@@ -7,9 +7,18 @@
 }
 
 /* ── Size variants ── */
-.lg .photo { width: var(--avatar-lg, 80px); height: var(--avatar-lg, 80px); }
-.md .photo { width: var(--avatar-md, 64px); height: var(--avatar-md, 64px); }
-.sm .photo { width: var(--avatar-sm, 56px); height: var(--avatar-sm, 56px); }
+.lg .photo {
+  width: var(--avatar-lg, 80px);
+  height: var(--avatar-lg, 80px);
+}
+.md .photo {
+  width: var(--avatar-md, 64px);
+  height: var(--avatar-md, 64px);
+}
+.sm .photo {
+  width: var(--avatar-sm, 56px);
+  height: var(--avatar-sm, 56px);
+}
 
 /* ── Circular frame ── */
 .frame {
@@ -105,8 +114,193 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.5; transform: scale(0.7); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.7);
+  }
+}
+
+/* ── Thought bubble tooltip ── */
+.tooltip {
+  position: absolute;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 30;
+  animation: popIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.tooltipText {
+  position: relative;
+  z-index: 1;
+}
+
+.tooltipArrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+/* ── Tooltip position variants ──
+   All tooltips point TOWARD the table center so they stay on-screen:
+   north → bottom, south → top, west → right, east → left
+*/
+
+/* North → bottom: below the avatar (toward center) */
+.tooltipBottom {
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+.tooltipBottom .tooltipArrow {
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid rgba(20, 30, 80, 0.92);
+}
+
+/* South → top: above the avatar (toward center) */
+.tooltipTop {
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+.tooltipTop .tooltipArrow {
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid rgba(20, 30, 80, 0.92);
+}
+
+/* East → left: to the left of the avatar (toward center) */
+.tooltipLeft {
+  top: 50%;
+  right: calc(100% + 8px);
+  transform: translateY(-50%);
+}
+.tooltipLeft .tooltipArrow {
+  top: 50%;
+  right: -6px;
+  transform: translateY(-50%);
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 6px solid rgba(20, 30, 80, 0.92);
+}
+
+/* West → right: to the right of the avatar (toward center) */
+.tooltipRight {
+  top: 50%;
+  left: calc(100% + 8px);
+  transform: translateY(-50%);
+}
+.tooltipRight .tooltipArrow {
+  top: 50%;
+  left: -6px;
+  transform: translateY(-50%);
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 6px solid rgba(20, 30, 80, 0.92);
+}
+
+/* ── Tooltip type variants ── */
+.tooltip.bid {
+  background: rgba(20, 30, 80, 0.92);
+  color: #fff;
+  border: 1px solid rgba(80, 130, 240, 0.4);
+}
+.bid .tooltipArrow {
+  border-color: transparent;
+}
+.tooltipBottom.bid .tooltipArrow {
+  border-bottom-color: rgba(20, 30, 80, 0.92);
+}
+.tooltipTop.bid .tooltipArrow {
+  border-top-color: rgba(20, 30, 80, 0.92);
+}
+.tooltipLeft.bid .tooltipArrow {
+  border-left-color: rgba(20, 30, 80, 0.92);
+}
+.tooltipRight.bid .tooltipArrow {
+  border-right-color: rgba(20, 30, 80, 0.92);
+}
+
+.tooltip.trickWin {
+  background: rgba(16, 60, 24, 0.92);
+  color: #4ade80;
+  border: 1px solid rgba(74, 222, 128, 0.4);
+}
+.tooltipBottom.trickWin .tooltipArrow {
+  border-bottom-color: rgba(16, 60, 24, 0.92);
+}
+.tooltipTop.trickWin .tooltipArrow {
+  border-top-color: rgba(16, 60, 24, 0.92);
+}
+.tooltipLeft.trickWin .tooltipArrow {
+  border-left-color: rgba(16, 60, 24, 0.92);
+}
+.tooltipRight.trickWin .tooltipArrow {
+  border-right-color: rgba(16, 60, 24, 0.92);
+}
+
+.tooltip.contract {
+  background: rgba(100, 60, 10, 0.92);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+}
+.tooltipBottom.contract .tooltipArrow {
+  border-bottom-color: rgba(100, 60, 10, 0.92);
+}
+.tooltipTop.contract .tooltipArrow {
+  border-top-color: rgba(100, 60, 10, 0.92);
+}
+.tooltipLeft.contract .tooltipArrow {
+  border-left-color: rgba(100, 60, 10, 0.92);
+}
+.tooltipRight.contract .tooltipArrow {
+  border-right-color: rgba(100, 60, 10, 0.92);
+}
+
+.tooltip.roundCancelled {
+  background: rgba(60, 20, 20, 0.92);
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.3);
+}
+.tooltipBottom.roundCancelled .tooltipArrow {
+  border-bottom-color: rgba(60, 20, 20, 0.92);
+}
+.tooltipTop.roundCancelled .tooltipArrow {
+  border-top-color: rgba(60, 20, 20, 0.92);
+}
+.tooltipLeft.roundCancelled .tooltipArrow {
+  border-left-color: rgba(60, 20, 20, 0.92);
+}
+.tooltipRight.roundCancelled .tooltipArrow {
+  border-right-color: rgba(60, 20, 20, 0.92);
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* ── Mobile tweaks ── */

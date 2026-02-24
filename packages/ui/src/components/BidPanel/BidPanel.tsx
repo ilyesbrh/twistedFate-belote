@@ -1,49 +1,46 @@
-import { useState } from 'react';
-import type { BiddingRound, BidValue, Suit } from '@belote/core';
-import styles from './BidPanel.module.css';
+import { useState } from "react";
+import type { BiddingRound, BidValue, Suit } from "@belote/core";
+import styles from "./BidPanel.module.css";
 
 const SUIT_SYMBOLS: Record<Suit, string> = {
-  spades:   '♠',
-  hearts:   '♥',
-  diamonds: '♦',
-  clubs:    '♣',
+  spades: "♠",
+  hearts: "♥",
+  diamonds: "♦",
+  clubs: "♣",
 };
-const SUITS: Suit[] = ['spades', 'hearts', 'diamonds', 'clubs'];
-const RED_SUITS: Suit[] = ['hearts', 'diamonds'];
+const SUITS: Suit[] = ["spades", "hearts", "diamonds", "clubs"];
+const RED_SUITS: Suit[] = ["hearts", "diamonds"];
 
 interface BidPanelProps {
   biddingRound: BiddingRound;
   validBidValues: readonly BidValue[];
-  onBid: (type: 'pass' | 'suit' | 'coinche', value?: BidValue, suit?: Suit) => void;
+  onBid: (type: "pass" | "suit" | "coinche", value?: BidValue, suit?: Suit) => void;
 }
 
 export function BidPanel({ biddingRound, validBidValues, onBid }: BidPanelProps) {
-  const [selectedSuit,  setSelectedSuit]  = useState<Suit | null>(null);
+  const [selectedSuit, setSelectedSuit] = useState<Suit | null>(null);
   const [selectedValue, setSelectedValue] = useState<BidValue | null>(null);
 
   const canCoinche =
-    biddingRound.highestBid !== null &&
-    !biddingRound.coinched &&
-    !biddingRound.surcoinched;
+    biddingRound.highestBid !== null && !biddingRound.coinched && !biddingRound.surcoinched;
 
   const canBid = selectedSuit !== null && selectedValue !== null;
 
   function handleBid() {
     if (!canBid) return;
-    onBid('suit', selectedValue!, selectedSuit!);
+    onBid("suit", selectedValue!, selectedSuit!);
     setSelectedSuit(null);
     setSelectedValue(null);
   }
 
   return (
     <div className={styles.panel} data-testid="bid-panel">
-
       {/* ── Row 1: suit selectors ── */}
       <div className={styles.suitRow}>
         {SUITS.map((s) => (
           <button
             key={s}
-            className={`${styles.btn} ${styles.suitBtn} ${RED_SUITS.includes(s) ? styles.redSuit : ''} ${selectedSuit === s ? styles.suitSelected : ''}`}
+            className={`${styles.btn} ${styles.suitBtn} ${RED_SUITS.includes(s) ? styles.redSuit : ""} ${selectedSuit === s ? styles.suitSelected : ""}`}
             onClick={() => setSelectedSuit((prev) => (prev === s ? null : s))}
             aria-pressed={selectedSuit === s}
           >
@@ -59,7 +56,7 @@ export function BidPanel({ biddingRound, validBidValues, onBid }: BidPanelProps)
         {validBidValues.map((v) => (
           <button
             key={v}
-            className={`${styles.btn} ${styles.valueBtn} ${selectedValue === v ? styles.valueSelected : ''}`}
+            className={`${styles.btn} ${styles.valueBtn} ${selectedValue === v ? styles.valueSelected : ""}`}
             onClick={() => setSelectedValue((prev) => (prev === v ? null : v))}
             aria-pressed={selectedValue === v}
           >
@@ -72,31 +69,23 @@ export function BidPanel({ biddingRound, validBidValues, onBid }: BidPanelProps)
 
       {/* ── Row 3: actions ── */}
       <div className={styles.actions}>
-        <button
-          className={`${styles.btn} ${styles.passBtn}`}
-          onClick={() => onBid('pass')}
-        >
+        <button className={`${styles.btn} ${styles.passBtn}`} onClick={() => onBid("pass")}>
           Pass
         </button>
 
-        <button
-          className={`${styles.btn} ${styles.bidBtn}`}
-          disabled={!canBid}
-          onClick={handleBid}
-        >
-          {canBid ? `${SUIT_SYMBOLS[selectedSuit!]} ${String(selectedValue!)}` : 'Bid'}
+        <button className={`${styles.btn} ${styles.bidBtn}`} disabled={!canBid} onClick={handleBid}>
+          {canBid ? `${SUIT_SYMBOLS[selectedSuit!]} ${String(selectedValue!)}` : "Bid"}
         </button>
 
         {canCoinche && (
           <button
             className={`${styles.btn} ${styles.coincheBtn} ${styles.fullWidth}`}
-            onClick={() => onBid('coinche')}
+            onClick={() => onBid("coinche")}
           >
             Coinche
           </button>
         )}
       </div>
-
     </div>
   );
 }

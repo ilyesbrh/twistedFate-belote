@@ -1,4 +1,4 @@
-import styles from './TimerRing.module.css';
+import styles from "./TimerRing.module.css";
 
 interface TimerRingProps {
   isActive: boolean;
@@ -26,12 +26,7 @@ export function TimerRing({ isActive }: TimerRingProps) {
       aria-hidden="true"
     >
       {/* Dim track */}
-      <circle
-        className={styles.track}
-        cx="50"
-        cy="50"
-        r={R}
-      />
+      <circle className={styles.track} cx="50" cy="50" r={R} />
       {/* Animated progress arc */}
       <circle
         className={styles.progress}
@@ -40,8 +35,8 @@ export function TimerRing({ isActive }: TimerRingProps) {
         r={R}
         style={
           {
-            '--circ': CIRCUMFERENCE,
-            '--dur': `${DURATION}s`,
+            "--circ": CIRCUMFERENCE,
+            "--dur": `${DURATION}s`,
           } as React.CSSProperties
         }
       />

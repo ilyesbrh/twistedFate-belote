@@ -1,5 +1,5 @@
-import type { Suit } from '../../data/mockGame.js';
-import styles from './ScorePanel.module.css';
+import type { Suit } from "../../data/mockGame.js";
+import styles from "./ScorePanel.module.css";
 
 interface ScorePanelProps {
   target: number;
@@ -12,13 +12,13 @@ interface ScorePanelProps {
 }
 
 const SUIT_SYMBOLS: Record<Suit, string> = {
-  clubs: '♣',
-  hearts: '♥',
-  diamonds: '♦',
-  spades: '♠',
+  clubs: "♣",
+  hearts: "♥",
+  diamonds: "♦",
+  spades: "♠",
 };
 
-const RED_SUITS: Suit[] = ['hearts', 'diamonds'];
+const RED_SUITS: Suit[] = ["hearts", "diamonds"];
 
 export function ScorePanel({
   target,
@@ -32,7 +32,6 @@ export function ScorePanel({
 
   return (
     <div className={styles.panel} data-testid="score-panel">
-
       {/* Target */}
       <span className={styles.target}>{target}</span>
 
@@ -45,7 +44,9 @@ export function ScorePanel({
         <span className={styles.teamTotal}>{usTotalScore}</span>
       </div>
 
-      <span className={styles.dot} aria-hidden="true">·</span>
+      <span className={styles.dot} aria-hidden="true">
+        ·
+      </span>
 
       {/* EW */}
       <div className={styles.team}>
@@ -60,7 +61,6 @@ export function ScorePanel({
       <span className={`${styles.trump} ${isRedSuit ? styles.trumpRed : styles.trumpBlack}`}>
         {SUIT_SYMBOLS[trumpSuit]}
       </span>
-
     </div>
   );
 }

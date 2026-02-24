@@ -1,17 +1,17 @@
-import { useState } from 'react';
-import { useGameSession } from '../../hooks/useGameSession.js';
-import { BidPanel } from '../BidPanel/BidPanel.js';
-import { ChatButton } from '../ChatButton/ChatButton.js';
-import { ChatPanel } from '../ChatPanel/ChatPanel.js';
-import { GameOver } from '../GameOver/GameOver.js';
-import { HandDisplay } from '../HandDisplay/HandDisplay.js';
-import { OpponentHand } from '../OpponentHand/OpponentHand.js';
-import { PlayerAvatar } from '../PlayerAvatar/PlayerAvatar.js';
-import { RoundSummary } from '../RoundSummary/RoundSummary.js';
-import { ScorePanel } from '../ScorePanel/ScorePanel.js';
-import { StartScreen } from '../StartScreen/StartScreen.js';
-import { TrickArea } from '../TrickArea/TrickArea.js';
-import styles from './GameTable.module.css';
+import { useState } from "react";
+import { useGameSession } from "../../hooks/useGameSession.js";
+import { BidPanel } from "../BidPanel/BidPanel.js";
+import { ChatButton } from "../ChatButton/ChatButton.js";
+import { ChatPanel } from "../ChatPanel/ChatPanel.js";
+import { GameOver } from "../GameOver/GameOver.js";
+import { HandDisplay } from "../HandDisplay/HandDisplay.js";
+import { OpponentHand } from "../OpponentHand/OpponentHand.js";
+import { PlayerAvatar } from "../PlayerAvatar/PlayerAvatar.js";
+import { RoundSummary } from "../RoundSummary/RoundSummary.js";
+import { ScorePanel } from "../ScorePanel/ScorePanel.js";
+import { StartScreen } from "../StartScreen/StartScreen.js";
+import { TrickArea } from "../TrickArea/TrickArea.js";
+import styles from "./GameTable.module.css";
 
 interface GameTableProps {
   onPlayAgain: () => void;
@@ -21,24 +21,24 @@ export function GameTable({ onPlayAgain }: GameTableProps) {
   const state = useGameSession();
   const [chatOpen, setChatOpen] = useState(false);
 
-  const south = state.players.find((p) => p.position === 'south')!;
-  const north = state.players.find((p) => p.position === 'north')!;
-  const west  = state.players.find((p) => p.position === 'west')!;
-  const east  = state.players.find((p) => p.position === 'east')!;
+  const south = state.players.find((p) => p.position === "south")!;
+  const north = state.players.find((p) => p.position === "north")!;
+  const west = state.players.find((p) => p.position === "west")!;
+  const east = state.players.find((p) => p.position === "east")!;
 
-  const active  = state.activePosition;
-  const showBid = state.phase === 'bidding' && state.isMyTurn && state.biddingRound !== null;
+  const active = state.activePosition;
+  const showBid = state.phase === "bidding" && state.isMyTurn && state.biddingRound !== null;
 
   const tableBg = `url('${import.meta.env.BASE_URL}table-bg.svg') center / cover no-repeat`;
 
   return (
     <div className={styles.table} style={{ background: tableBg }} data-testid="game-table">
       {/* ── Felt layers ── */}
-      <div className={styles.felt}       aria-hidden="true" />
-      <div className={styles.feltWeave}  aria-hidden="true" />
+      <div className={styles.felt} aria-hidden="true" />
+      <div className={styles.feltWeave} aria-hidden="true" />
       <div className={styles.feltCenter} aria-hidden="true" />
-      <div className={styles.rings}      aria-hidden="true" />
-      <div className={styles.woodRim}    aria-hidden="true" />
+      <div className={styles.rings} aria-hidden="true" />
+      <div className={styles.woodRim} aria-hidden="true" />
 
       {/* ── Score panel — top left ── */}
       <div className={styles.scorePanel}>
@@ -48,7 +48,7 @@ export function GameTable({ onPlayAgain }: GameTableProps) {
           themScore={state.themScore}
           usTotalScore={state.usTotalScore}
           themTotalScore={state.themTotalScore}
-          trumpSuit={state.trumpSuit ?? 'spades'}
+          trumpSuit={state.trumpSuit ?? "spades"}
           dealerName={state.dealerName}
         />
       </div>
@@ -60,12 +60,22 @@ export function GameTable({ onPlayAgain }: GameTableProps) {
 
       {/* ── North avatar ── */}
       <div className={styles.northAvatar}>
-        <PlayerAvatar player={north} size="md" isActive={active === 'north'} />
+        <PlayerAvatar
+          player={north}
+          size="md"
+          isActive={active === "north"}
+          bubbleMessage={state.bubbles.north}
+        />
       </div>
 
       {/* ── West avatar ── */}
       <div className={styles.westAvatar}>
-        <PlayerAvatar player={west} size="sm" isActive={active === 'west'} />
+        <PlayerAvatar
+          player={west}
+          size="sm"
+          isActive={active === "west"}
+          bubbleMessage={state.bubbles.west}
+        />
       </div>
 
       {/* ── West card stack ── */}
@@ -75,7 +85,12 @@ export function GameTable({ onPlayAgain }: GameTableProps) {
 
       {/* ── East avatar ── */}
       <div className={styles.eastAvatar}>
-        <PlayerAvatar player={east} size="sm" isActive={active === 'east'} />
+        <PlayerAvatar
+          player={east}
+          size="sm"
+          isActive={active === "east"}
+          bubbleMessage={state.bubbles.east}
+        />
       </div>
 
       {/* ── East card stack ── */}
@@ -110,7 +125,12 @@ export function GameTable({ onPlayAgain }: GameTableProps) {
           />
         </div>
         <div className={styles.southAvatar}>
-          <PlayerAvatar player={south} size="lg" isActive={active === 'south'} />
+          <PlayerAvatar
+            player={south}
+            size="lg"
+            isActive={active === "south"}
+            bubbleMessage={state.bubbles.south}
+          />
           <div className={styles.chatBtn}>
             <ChatButton onClick={() => setChatOpen(true)} />
           </div>
@@ -118,10 +138,10 @@ export function GameTable({ onPlayAgain }: GameTableProps) {
       </div>
 
       {/* ── Chat panel overlay ── */}
-      <ChatPanel isOpen={chatOpen} onClose={() => setChatOpen(false)} />
+      <ChatPanel isOpen={chatOpen} onClose={() => setChatOpen(false)} messages={state.messages} />
 
       {/* ── Start screen ── */}
-      {state.phase === 'idle' && (
+      {state.phase === "idle" && (
         <StartScreen
           players={state.players}
           targetScore={state.targetScore}
@@ -130,7 +150,7 @@ export function GameTable({ onPlayAgain }: GameTableProps) {
       )}
 
       {/* ── Round summary (inter-party) ── */}
-      {state.phase === 'roundComplete' && state.lastRoundResult !== null && (
+      {state.phase === "roundComplete" && state.lastRoundResult !== null && (
         <RoundSummary
           roundNumber={state.roundNumber}
           result={state.lastRoundResult}
@@ -142,7 +162,7 @@ export function GameTable({ onPlayAgain }: GameTableProps) {
       )}
 
       {/* ── Game over screen ── */}
-      {state.phase === 'gameComplete' && state.winnerTeamIndex !== null && (
+      {state.phase === "gameComplete" && state.winnerTeamIndex !== null && (
         <GameOver
           winnerTeamIndex={state.winnerTeamIndex}
           nsTotal={state.usTotalScore}
@@ -151,7 +171,6 @@ export function GameTable({ onPlayAgain }: GameTableProps) {
           onPlayAgain={onPlayAgain}
         />
       )}
-
     </div>
   );
 }

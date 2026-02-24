@@ -1,8 +1,8 @@
 :root {
   /* ── Avatar sizes ── */
-  --avatar-lg: 80px;   /* south */
-  --avatar-md: 64px;   /* north */
-  --avatar-sm: 56px;   /* west / east */
+  --avatar-lg: 80px; /* south */
+  --avatar-md: 64px; /* north */
+  --avatar-sm: 56px; /* west / east */
 
   /* ── Card sizes ── */
   --card-w-hand: 80px;
@@ -57,7 +57,7 @@
   --gap-lg: 24px;
 
   /* ── Font ── */
-  --font: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+  --font: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
   --font-size-score-target: 28px;
   --font-size-score-value: 22px;
   --font-size-score-sm: 14px;

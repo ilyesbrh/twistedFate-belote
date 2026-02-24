@@ -1,7 +1,7 @@
-import type { CSSProperties } from 'react';
-import type { TrickCardData, Position } from '../../data/mockGame.js';
-import { CardFace } from '../CardFace/CardFace.js';
-import styles from './TrickArea.module.css';
+import type { CSSProperties } from "react";
+import type { TrickCardData, Position } from "../../data/mockGame.js";
+import { CardFace } from "../CardFace/CardFace.js";
+import styles from "./TrickArea.module.css";
 
 interface TrickAreaProps {
   cards: TrickCardData[];
@@ -12,19 +12,19 @@ interface TrickAreaProps {
 const FLY_IN_CLASS: Record<Position, string> = {
   south: styles.fromSouth,
   north: styles.fromNorth,
-  west:  styles.fromWest,
-  east:  styles.fromEast,
+  west: styles.fromWest,
+  east: styles.fromEast,
 };
 
 const SWEEP_CLASS: Record<Position, string> = {
   south: styles.sweepSouth,
   north: styles.sweepNorth,
-  west:  styles.sweepWest,
-  east:  styles.sweepEast,
+  west: styles.sweepWest,
+  east: styles.sweepEast,
 };
 
 export function TrickArea({ cards, winnerPosition }: TrickAreaProps) {
-  const sweepClass = winnerPosition ? SWEEP_CLASS[winnerPosition] : '';
+  const sweepClass = winnerPosition ? SWEEP_CLASS[winnerPosition] : "";
 
   return (
     <div className={`${styles.area} ${sweepClass}`} data-testid="trick-area">

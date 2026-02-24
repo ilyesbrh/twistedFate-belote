@@ -1,10 +1,10 @@
-import type { ReactElement } from 'react';
-import styles from './GameOver.module.css';
+import type { ReactElement } from "react";
+import styles from "./GameOver.module.css";
 
 // NS = positions 0 (ElenaP) & 2 (DilyanaBl)
 // EW = positions 1 (Villy) & 3 (Vane_Bane)
-const NS_PLAYERS = 'ElenaP & DilyanaBl';
-const EW_PLAYERS = 'Villy & Vane_Bane';
+const NS_PLAYERS = "ElenaP & DilyanaBl";
+const EW_PLAYERS = "Villy & Vane_Bane";
 
 interface GameOverProps {
   /** 0 = NS wins, 1 = EW wins */
@@ -23,7 +23,7 @@ export function GameOver({
   onPlayAgain,
 }: GameOverProps): ReactElement {
   const nsWins = winnerTeamIndex === 0;
-  const winner = nsWins ? 'NS' : 'EW';
+  const winner = nsWins ? "NS" : "EW";
   const winnerPlayers = nsWins ? NS_PLAYERS : EW_PLAYERS;
   const youWon = nsWins; // human is always position 0 = NS team
 
@@ -34,27 +34,25 @@ export function GameOver({
   return (
     <div className={styles.overlay} role="dialog" aria-modal="true">
       <div className={styles.panel}>
-
         {/* ── Game Over label ── */}
         <div className={styles.gameOverLabel}>GAME OVER</div>
 
         {/* ── Winner announcement ── */}
         <div className={styles.winnerSection}>
           <div className={`${styles.trophy} ${youWon ? styles.trophyGold : styles.trophySilver}`}>
-            {youWon ? '🏆' : '🥈'}
+            {youWon ? "🏆" : "🥈"}
           </div>
           <div className={`${styles.winnerTeam} ${nsWins ? styles.nsColor : styles.ewColor}`}>
             {winner} WINS!
           </div>
           <div className={styles.winnerNames}>{winnerPlayers}</div>
           <div className={`${styles.youResult} ${youWon ? styles.youWon : styles.youLost}`}>
-            {youWon ? 'You won this game!' : 'Better luck next time!'}
+            {youWon ? "You won this game!" : "Better luck next time!"}
           </div>
         </div>
 
         {/* ── Score bars ── */}
         <div className={styles.scoreBars}>
-
           <ScoreBar
             label="NS (You)"
             score={nsTotal}
@@ -76,14 +74,12 @@ export function GameOver({
           <div className={styles.targetLine}>
             <span className={styles.targetLabel}>Goal: {String(targetScore)} pts</span>
           </div>
-
         </div>
 
         {/* ── Play again ── */}
         <button className={styles.playAgainBtn} onClick={onPlayAgain}>
           PLAY AGAIN
         </button>
-
       </div>
     </div>
   );
@@ -100,19 +96,24 @@ interface ScoreBarProps {
   colorClass: string;
 }
 
-function ScoreBar({ label, score, target, widthPct, isWinner, colorClass }: ScoreBarProps): ReactElement {
+function ScoreBar({
+  label,
+  score,
+  target,
+  widthPct,
+  isWinner,
+  colorClass,
+}: ScoreBarProps): ReactElement {
   return (
     <div className={styles.barRow}>
-      <span className={`${styles.barLabel} ${isWinner ? styles.barLabelWinner : ''}`}>
-        {label}
-      </span>
+      <span className={`${styles.barLabel} ${isWinner ? styles.barLabelWinner : ""}`}>{label}</span>
       <div className={styles.barTrack}>
         <div
           className={`${styles.barFill} ${colorClass}`}
           style={{ width: `${String(widthPct)}%` }}
         />
       </div>
-      <span className={`${styles.barScore} ${isWinner ? styles.barScoreWinner : ''}`}>
+      <span className={`${styles.barScore} ${isWinner ? styles.barScoreWinner : ""}`}>
         {String(score)}
         {score >= target && <span className={styles.checkMark}> ✓</span>}
       </span>

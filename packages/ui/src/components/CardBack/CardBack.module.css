@@ -14,7 +14,7 @@
 
 /* Outer inner border frame */
 .card::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 4px;
   border: 1.5px solid var(--card-back-border);
@@ -24,7 +24,7 @@
 
 /* Hatch pattern */
 .card::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 7px;
   border-radius: 3px;
