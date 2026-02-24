@@ -7,6 +7,7 @@
   /* background set via inline style in GameTable.tsx to respect Vite base path */
 }
 
+
 /* All background layers now inside the SVG — these divs are unused */
 .felt, .feltWeave, .feltCenter, .rings, .woodRim { display: none; }
 
