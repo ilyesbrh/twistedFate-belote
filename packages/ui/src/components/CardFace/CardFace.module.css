@@ -1,0 +1,26 @@
+.card {
+  width: var(--cw, var(--card-w-hand));
+  height: var(--ch, var(--card-h-hand));
+  background: var(--card-face-bg);
+  border-radius: var(--card-radius);
+  border: 1px solid #d4c89a;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  position: relative;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.selected {
+  box-shadow:
+    0 0 0 3px var(--gold),
+    var(--card-shadow);
+}

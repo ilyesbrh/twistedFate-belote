@@ -1,0 +1,88 @@
+/* ── Compact horizontal score bar ── */
+.panel {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px 5px 10px;
+  background: var(--score-panel-bg);
+  border: 1px solid var(--score-panel-border);
+  border-top: none;
+  border-left: none;
+  border-bottom-right-radius: 10px;
+  box-shadow: var(--score-panel-glow);
+  backdrop-filter: blur(12px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  color: var(--text-score);
+  font-family: var(--font);
+  white-space: nowrap;
+}
+
+/* Top highlight */
+.panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(100, 160, 255, 0.5), transparent);
+  pointer-events: none;
+}
+
+.target {
+  font-size: var(--font-size-score-target, 28px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -1px;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+}
+
+.sep {
+  display: block;
+  width: 1px;
+  align-self: stretch;
+  background: rgba(255, 255, 255, 0.15);
+  margin: 0 2px;
+}
+
+/* Each team block: label + score + total stacked */
+.team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+  gap: 1px;
+}
+
+.teamLabel {
+  font-size: var(--font-size-label, 10px);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.teamScore {
+  font-size: var(--font-size-score-value, 22px);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.teamTotal {
+  font-size: var(--font-size-score-sm, 14px);
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.dot {
+  font-size: 18px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.3);
+  line-height: 1;
+  align-self: center;
+}
+
+.trump {
+  font-size: 18px;
+  line-height: 1;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
+}

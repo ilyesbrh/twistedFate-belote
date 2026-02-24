@@ -1,0 +1,18 @@
+.area {
+  position: relative;
+  width: clamp(200px, 26vw, 320px);
+  height: clamp(160px, 20vw, 260px);
+  pointer-events: none;
+}
+
+/* Trick cards use trick size token */
+.cardSlot {
+  --card-w-hand: var(--card-w-trick);
+  --card-h-hand: var(--card-h-trick);
+}
+
+.cardSlot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}

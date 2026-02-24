@@ -1,0 +1,86 @@
+/* ─────────────────────────────────────────
+   Top opponent: horizontal arc fan
+   ───────────────────────────────────────── */
+.topFan {
+  position: relative;
+  width: 380px;
+  height: 90px;
+}
+
+.topFanSlot {
+  position: absolute;
+  top: 0; left: 50%;
+  transform-origin: 50% -300px;
+}
+
+/* ─────────────────────────────────────────
+   Side opponents: same arc fan, rotated 90°
+
+   sideWrap  — the OUTER box with POST-rotation dimensions.
+               GameTable positions this along the left/right edge.
+               width = topFan height, height = topFan width.
+
+   sideFan   — the INNER box with PRE-rotation dimensions (= topFan).
+               Absolutely centered inside sideWrap, then rotated ±90°.
+
+   sideFanSlot — identical to topFanSlot (same transform-origin).
+   ───────────────────────────────────────── */
+.sideWrap {
+  position: relative;
+  width: 90px;   /* = topFan height */
+  height: 380px; /* = topFan width  */
+}
+
+.sideFan {
+  position: absolute;
+  width: 380px;  /* = topFan width  */
+  height: 90px;  /* = topFan height */
+  /* center the pre-rotation box inside the wrapper */
+  top:  50%; left: 50%;
+  transform-origin: center center;
+}
+
+.sideFanLeft  { transform: translate(-50%, -50%) rotate(-90deg); }
+.sideFanRight { transform: translate(-50%, -50%) rotate(90deg);  }
+
+.sideFanSlot {
+  position: absolute;
+  top: 0; left: 50%;
+  transform-origin: 50% -300px; /* same arc as topFanSlot */
+}
+
+/* ─────────────────────────────────────────
+   Tablet (≤ 900px)
+   ───────────────────────────────────────── */
+@media (max-width: 900px) {
+  .topFan     { width: 280px; height: 70px; }
+  .topFanSlot { transform-origin: 50% -220px; }
+
+  .sideWrap   { width: 70px; height: 280px; }
+  .sideFan    { width: 280px; height: 70px; }
+  .sideFanSlot { transform-origin: 50% -220px; }
+}
+
+/* ─────────────────────────────────────────
+   Landscape phone (height ≤ 500px)
+   ───────────────────────────────────────── */
+@media (max-height: 500px) and (orientation: landscape) {
+  .topFan     { width: 220px; height: 54px; }
+  .topFanSlot { transform-origin: 50% -170px; }
+
+  .sideWrap   { width: 54px; height: 220px; }
+  .sideFan    { width: 220px; height: 54px; }
+  .sideFanSlot { transform-origin: 50% -170px; }
+}
+
+/* ─────────────────────────────────────────
+   Mobile (≤ 600px)
+   ───────────────────────────────────────── */
+@media (max-width: 600px) {
+  .topFan     { width: 200px; height: 52px; }
+  .topFanSlot { transform-origin: 50% -160px; }
+
+  .sideWrap   { width: 52px; height: 200px; }
+  .sideFan    { width: 200px; height: 52px; }
+  .sideFanSlot { transform-origin: 50% -160px; }
+}

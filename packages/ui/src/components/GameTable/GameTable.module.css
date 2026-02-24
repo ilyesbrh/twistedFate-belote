@@ -1,0 +1,232 @@
+.table {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: var(--font);
+  background: #1c0e05; /* dark wood base */
+}
+
+/* ── Green felt surface ── */
+.felt {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 100% 100% at 50% 50%,
+    #4aaa65 0%,
+    #3d9458 12%,
+    #2f7a47 28%,
+    #235e35 50%,
+    #194827 72%,
+    #103419 90%,
+    #0a2210 100%
+  );
+}
+
+/* ── SVG noise grain ── */
+.felt::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='felt'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23felt)' opacity='0.07'/%3E%3C/svg%3E");
+  background-size: 300px 300px;
+  pointer-events: none;
+}
+
+/* ── Crosshatch felt weave ── */
+.feltWeave {
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(0deg,   transparent, transparent 3px, rgba(0,0,0,.03) 3px, rgba(0,0,0,.03) 4px),
+    repeating-linear-gradient(90deg,  transparent, transparent 3px, rgba(0,0,0,.03) 3px, rgba(0,0,0,.03) 4px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Oval inner glow ── */
+.feltCenter {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 60% 58% at 50% 50%,
+    rgba(90, 200, 120, 0.1) 0%,
+    rgba(60, 160, 85, 0.06) 45%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Concentric rings ── */
+.rings {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 86% 86% at 50% 50%,
+    transparent 8%,
+    rgba(255,255,255,.055) 9%,  transparent 13%,
+    rgba(255,255,255,.048) 14%, transparent 20%,
+    rgba(255,255,255,.04)  21%, transparent 29%,
+    rgba(255,255,255,.032) 30%, transparent 40%,
+    rgba(255,255,255,.024) 41%, transparent 54%,
+    rgba(255,255,255,.016) 55%, transparent 68%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Dark wood rim vignette ── */
+.woodRim {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 100% 100% at 50% 50%,
+    transparent 58%,
+    rgba(10, 5, 2, 0.3)  76%,
+    rgba(6, 3, 1, 0.65)  92%,
+    rgba(0, 0, 0, 0.85) 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ═══════════════════════════════════════
+   Element positions — Desktop default
+   ═══════════════════════════════════════ */
+
+.scorePanel {
+  position: absolute;
+  top: 0; left: 0;
+  z-index: 20;
+}
+
+.northHand {
+  position: absolute;
+  top: 4px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+}
+
+/* North avatar overlays the north hand (centered horizontally) */
+.northAvatar {
+  position: absolute;
+  top: 24px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+/* West avatar overlays the west card strip */
+.westAvatar {
+  position: absolute;
+  left: 4px; top: 54%;
+  transform: translateY(-50%);
+  z-index: 12;
+}
+
+.westCards {
+  position: absolute;
+  left: 4px; top: 54%;
+  transform: translateY(-50%);
+  z-index: 8;
+}
+
+/* East avatar overlays the east card strip */
+.eastAvatar {
+  position: absolute;
+  right: 4px; top: 54%;
+  transform: translateY(-50%);
+  z-index: 12;
+}
+
+.eastCards {
+  position: absolute;
+  right: 4px; top: 54%;
+  transform: translateY(-50%);
+  z-index: 8;
+}
+
+.trickArea {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -52%);
+  z-index: 8;
+}
+
+/* ── South row: avatar + hand in one flex bar ── */
+.southRow {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  display: flex;
+  align-items: flex-end;
+  pointer-events: none;
+  z-index: 15;
+}
+
+/* Avatar: visually leftmost (order:-1), DOM-last so it paints above the card fan */
+.southAvatar {
+  order: -1;
+  flex: 0 0 auto;
+  padding: 0 0 8px 8px;
+  pointer-events: all;
+}
+
+/* Hand pivot: centered in remaining space */
+.handDisplay {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  pointer-events: all;
+}
+
+.chatBtn {
+  position: absolute;
+  top: 12px; right: 12px;
+  z-index: 20;
+}
+
+/* ═══════════════════════════════════════
+   Tablet (≤ 900px)
+   ═══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .northAvatar { top: 16px; }
+  .westAvatar  { left: 6px; }
+  .eastAvatar  { right: 6px; }
+}
+
+/* ═══════════════════════════════════════
+   Landscape phone (height ≤ 500px) — must come after tablet
+   ═══════════════════════════════════════ */
+@media (max-height: 500px) and (orientation: landscape) {
+  /* North avatar centered over north hand */
+  .northAvatar { top: 8px; left: 50%; transform: translateX(-50%); }
+
+  /* West avatar and cards share the same anchor */
+  .westAvatar  { left: 2px; top: 46%; transform: translateY(-50%); }
+  .westCards   { left: 2px; top: 46%; transform: translateY(-50%); }
+
+  /* East avatar and cards share the same anchor */
+  .eastAvatar  { right: 2px; top: 46%; transform: translateY(-50%); }
+  .eastCards   { right: 2px; top: 46%; transform: translateY(-50%); }
+
+  .trickArea   { top: 46%; }
+
+  .southAvatar { padding-bottom: 6px; }
+}
+
+/* ═══════════════════════════════════════
+   Mobile (≤ 600px)
+   ═══════════════════════════════════════ */
+@media (max-width: 600px) {
+  .northAvatar { top: 10px; }
+
+  .westAvatar  { left: 3px; top: 50%; transform: translateY(-50%); }
+  .westCards   { left: 2px; top: 50%; }
+
+  .eastAvatar  { right: 3px; top: 50%; transform: translateY(-50%); }
+  .eastCards   { right: 2px; top: 50%; }
+
+  .southAvatar { padding-bottom: 6px; }
+
+  .trickArea   { top: 48%; }
+}

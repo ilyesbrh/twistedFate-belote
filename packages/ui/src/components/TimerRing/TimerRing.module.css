@@ -1,0 +1,37 @@
+/* Positioned to overflow the avatar by ~8% on each side */
+.svg {
+  position: absolute;
+  inset: -8%;
+  width: 116%;
+  height: 116%;
+  pointer-events: none;
+  z-index: 6;
+  /* Start at top (12 o'clock) */
+  transform: rotate(-90deg);
+  overflow: visible;
+}
+
+/* ── Dim background track ── */
+.track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.18);
+  stroke-width: 5;
+}
+
+/* ── Countdown arc ── */
+.progress {
+  fill: none;
+  stroke: #4ade80;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-dasharray: var(--circ, 289);
+  stroke-dashoffset: 0;
+  animation: timerDrain var(--dur, 30s) linear forwards;
+}
+
+@keyframes timerDrain {
+  0%   { stroke-dashoffset: 0;                     stroke: #4ade80; }
+  60%  { stroke-dashoffset: calc(var(--circ) * 0.6); stroke: #facc15; }
+  85%  { stroke-dashoffset: calc(var(--circ) * 0.85); stroke: #f97316; }
+  100% { stroke-dashoffset: var(--circ);            stroke: #ef4444; }
+}

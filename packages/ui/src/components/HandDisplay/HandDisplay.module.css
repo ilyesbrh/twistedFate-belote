@@ -1,0 +1,39 @@
+.container {
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+.fanSlot {
+  position: absolute;
+  bottom: 0; left: 0;
+  transform-origin: 50% 520px;
+  cursor: pointer;
+}
+
+.cardHover {
+  transition: transform var(--anim-card-hover);
+  will-change: transform;
+}
+
+.fanSlot:hover  .cardHover { transform: translateY(-20px); }
+.fanSlot.selected .cardHover { transform: translateY(-26px); }
+
+/* ── Tablet ── */
+@media (max-width: 900px) {
+  .fanSlot { transform-origin: 50% 380px; }
+}
+
+/* ── Landscape phone ── */
+@media (max-height: 500px) and (orientation: landscape) {
+  .fanSlot { transform-origin: 50% 200px; }
+  .fanSlot:hover  .cardHover { transform: translateY(-10px); }
+  .fanSlot.selected .cardHover { transform: translateY(-14px); }
+}
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  .fanSlot { transform-origin: 50% 260px; }
+  .fanSlot:hover  .cardHover { transform: translateY(-14px); }
+  .fanSlot.selected .cardHover { transform: translateY(-18px); }
+}

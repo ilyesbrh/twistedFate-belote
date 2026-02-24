@@ -1,0 +1,46 @@
+.card {
+  width: var(--cw, var(--card-w-opp));
+  height: var(--ch, var(--card-h-opp));
+  background-color: var(--card-back-primary);
+  border-radius: var(--card-radius);
+  border: 2px solid var(--card-back-border);
+  box-shadow: var(--card-shadow);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Outer inner border frame */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1.5px solid var(--card-back-border);
+  border-radius: 4px;
+  z-index: 1;
+}
+
+/* Hatch pattern */
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border-radius: 3px;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.06) 0,
+      rgba(255, 255, 255, 0.06) 1px,
+      transparent 0,
+      transparent 8px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.06) 0,
+      rgba(255, 255, 255, 0.06) 1px,
+      transparent 0,
+      transparent 8px
+    );
+  background-color: var(--card-back-mid);
+  z-index: 0;
+}
