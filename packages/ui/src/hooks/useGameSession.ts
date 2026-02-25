@@ -112,7 +112,7 @@ export interface GameSessionState {
 
 export function useGameSession(): GameSessionState {
   const sessionRef = useRef(
-    new GameSession({ playerTypes: ["human", "ai", "ai", "ai"], stepDelayMs: 800 }),
+    new GameSession({ playerTypes: ["human", "ai", "ai", "ai"], stepDelayMs: 1000 }),
   );
   const [rev, setRev] = useState(0);
   const [isDealing, setIsDealing] = useState(false);
@@ -145,7 +145,7 @@ export function useGameSession(): GameSessionState {
     bubbleTimers.current[pos] = setTimeout(() => {
       setBubbles((prev) => ({ ...prev, [pos]: null }));
       bubbleTimers.current[pos] = null;
-    }, 2500);
+    }, 4000);
   }, []);
 
   useEffect(() => {
